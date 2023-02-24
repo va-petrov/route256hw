@@ -4,27 +4,28 @@ import (
 	"context"
 	"errors"
 	"log"
-	"route256/checkout/internal/service"
+	"route256/checkout/internal/domain"
 )
 
 type Handler struct {
-	Service *service.Service
+	businessLogic *domain.Model
 }
 
-func New(service *service.Service) *Handler {
+func New(businessLogic *domain.Model) *Handler {
 	return &Handler{
-		Service: service,
+		businessLogic: businessLogic,
 	}
 }
 
 type Request struct {
 	User  int64  `json:"user"`
-	SKU   uint32 `json:"sku"`
+	Sku   uint32 `json:"sku"`
 	Count uint16 `json:"count"`
 }
 
 var (
 	ErrEmptyUser = errors.New("empty user")
+	ErrEmptySKU  = errors.New("empty sku")
 )
 
 func (r Request) Validate() error {
@@ -35,15 +36,18 @@ func (r Request) Validate() error {
 }
 
 type Response struct {
+	Test string `json:"test"`
 }
 
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	log.Printf("addToCart: %+v", req)
 
-	err := h.Service.AddToCart(ctx, req.User, req.SKU, req.Count)
+	var response Response
+
+	err := h.businessLogic.AddToCart(ctx, req.User, req.Sku, req.Count)
 	if err != nil {
-		return Response{}, err
+		return response, err
 	}
 
-	return Response{}, nil
+	return response, nil
 }

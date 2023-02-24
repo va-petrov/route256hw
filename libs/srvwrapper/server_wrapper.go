@@ -28,9 +28,7 @@ func (w *Wrapper[Req, Res]) ServeHTTP(resWriter http.ResponseWriter, httpReq *ht
 	limitedReader := io.LimitReader(httpReq.Body, 1_000_000)
 
 	var request Req
-	decoder := json.NewDecoder(limitedReader)
-	decoder.DisallowUnknownFields()
-	err := decoder.Decode(&request)
+	err := json.NewDecoder(limitedReader).Decode(&request)
 	if err != nil {
 		resWriter.WriteHeader(http.StatusBadRequest)
 		writeErrorText(resWriter, "decoding JSON", err)
