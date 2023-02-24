@@ -1,26 +1,25 @@
-package addtocart
+package purchase
 
 import (
 	"context"
-	"errors"
 	"log"
 	"route256/checkout/internal/service"
+
+	"github.com/pkg/errors"
 )
 
 type Handler struct {
-	Service *service.Service
+	Services *service.Service
 }
 
-func New(service *service.Service) *Handler {
+func New(services *service.Service) *Handler {
 	return &Handler{
-		Service: service,
+		Services: services,
 	}
 }
 
 type Request struct {
-	User  int64  `json:"user"`
-	SKU   uint32 `json:"sku"`
-	Count uint16 `json:"count"`
+	User int64 `json:"user"`
 }
 
 var (
@@ -35,15 +34,19 @@ func (r Request) Validate() error {
 }
 
 type Response struct {
+	OrderID int64 `json:"orderID"`
 }
 
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
-	log.Printf("addToCart: %+v", req)
+	log.Printf("createOrder: %+v", req)
 
-	err := h.Service.AddToCart(ctx, req.User, req.SKU, req.Count)
+	var response Response
+
+	orderID, err := h.Services.Purchase(ctx, req.User)
 	if err != nil {
-		return Response{}, err
+		return response, err
 	}
 
-	return Response{}, nil
+	response.OrderID = orderID
+	return response, nil
 }

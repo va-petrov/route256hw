@@ -1,19 +1,20 @@
-package addtocart
+package deletefromcart
 
 import (
 	"context"
-	"errors"
 	"log"
 	"route256/checkout/internal/service"
+
+	"github.com/pkg/errors"
 )
 
 type Handler struct {
-	Service *service.Service
+	businessLogic *service.Service
 }
 
-func New(service *service.Service) *Handler {
+func New(businessLogic *service.Service) *Handler {
 	return &Handler{
-		Service: service,
+		businessLogic: businessLogic,
 	}
 }
 
@@ -38,9 +39,9 @@ type Response struct {
 }
 
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
-	log.Printf("addToCart: %+v", req)
+	log.Printf("deleteFromCart: %+v", req)
 
-	err := h.Service.AddToCart(ctx, req.User, req.SKU, req.Count)
+	err := h.businessLogic.DeleteFromCart(ctx, req.User, req.SKU, req.Count)
 	if err != nil {
 		return Response{}, err
 	}

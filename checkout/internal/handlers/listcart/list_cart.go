@@ -1,4 +1,4 @@
-package addtocart
+package listcart
 
 import (
 	"context"
@@ -18,9 +18,7 @@ func New(service *service.Service) *Handler {
 }
 
 type Request struct {
-	User  int64  `json:"user"`
-	SKU   uint32 `json:"sku"`
-	Count uint16 `json:"count"`
+	User int64 `json:"user"`
 }
 
 var (
@@ -34,16 +32,36 @@ func (r Request) Validate() error {
 	return nil
 }
 
+type CartItem struct {
+	SKU   uint32 `json:"sku"`
+	Count uint16 `json:"count"`
+	Name  string `json:"name"`
+	Price uint32 `json:"price"`
+}
+
 type Response struct {
+	Items []CartItem
 }
 
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	log.Printf("addToCart: %+v", req)
 
-	err := h.Service.AddToCart(ctx, req.User, req.SKU, req.Count)
+	items, err := h.Service.ListCart(ctx, req.User)
 	if err != nil {
 		return Response{}, err
 	}
 
-	return Response{}, nil
+	response := Response{
+		Items: make([]CartItem, len(items)),
+	}
+	for i, item := range items {
+		response.Items[i] = CartItem{
+			SKU:   item.SKU,
+			Count: item.Count,
+			Name:  item.Name,
+			Price: item.Price,
+		}
+	}
+
+	return response, nil
 }

@@ -1,4 +1,4 @@
-package domain
+package service
 
 import (
 	"context"
@@ -6,17 +6,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Stock struct {
-	WarehouseID int64
-	Count       uint64
-}
-
 var (
 	ErrInsufficientStocks = errors.New("insufficient stocks")
 )
 
-func (m *Model) AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error {
-	stocks, err := m.stocksChecker.Stocks(ctx, sku)
+func (m *Service) AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error {
+	stocks, err := m.LOMSService.Stocks(ctx, sku)
 	if err != nil {
 		return errors.WithMessage(err, "checking stocks")
 	}
