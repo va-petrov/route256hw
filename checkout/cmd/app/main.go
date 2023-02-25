@@ -21,7 +21,6 @@ func main() {
 	if err != nil {
 		log.Fatal("config init", err)
 	}
-	log.Println(config.ConfigData)
 
 	lomsClient := lomsclient.New(config.ConfigData.Services.Loms)
 	productsClient := productsclient.New(config.ConfigData.Services.ProductService.Url,
@@ -34,7 +33,7 @@ func main() {
 	addToCartHandler := addtocart.New(checkoutService)
 	http.Handle("/addToCart", srvwrapper.New(addToCartHandler.Handle))
 	deleteFromCartHandler := deletefromcart.New(checkoutService)
-	http.Handle("/addToCart", srvwrapper.New(deleteFromCartHandler.Handle))
+	http.Handle("/deleteFromCart", srvwrapper.New(deleteFromCartHandler.Handle))
 	listHandler := listcart.New(checkoutService)
 	http.Handle("/listCart", srvwrapper.New(listHandler.Handle))
 

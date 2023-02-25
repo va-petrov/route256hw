@@ -40,21 +40,23 @@ type CartItem struct {
 }
 
 type Response struct {
-	Items []CartItem
+	Items      []CartItem `json:"items"`
+	TotalPrice uint32     `json:"totalPrice"`
 }
 
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
-	log.Printf("addToCart: %+v", req)
+	log.Printf("listCart: %+v", req)
 
-	items, err := h.Service.ListCart(ctx, req.User)
+	cart, err := h.Service.ListCart(ctx, req.User)
 	if err != nil {
 		return Response{}, err
 	}
 
 	response := Response{
-		Items: make([]CartItem, len(items)),
+		Items:      make([]CartItem, len(cart.Items)),
+		TotalPrice: cart.TotalPrice,
 	}
-	for i, item := range items {
+	for i, item := range cart.Items {
 		response.Items[i] = CartItem{
 			SKU:   item.SKU,
 			Count: item.Count,
