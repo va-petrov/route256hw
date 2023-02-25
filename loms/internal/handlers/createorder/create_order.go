@@ -37,7 +37,19 @@ func New(service *service.Service) *Handler {
 
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	log.Printf("createOrder: %+v", req)
+
+	items := make([]service.Item, len(req.Items))
+	for i, item := range req.Items {
+		items[i].SKU = item.SKU
+		items[i].Count = item.Count
+	}
+
+	orderID, err := h.Service.CreateOrder(ctx, req.User, items)
+	if err != nil {
+		return Response{}, err
+	}
+
 	return Response{
-		OrderID: 125,
+		OrderID: orderID,
 	}, nil
 }

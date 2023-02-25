@@ -1,27 +1,24 @@
 package productsclient
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 	"route256/checkout/internal/service"
+	"route256/libs/clientwrapper"
 
 	"github.com/pkg/errors"
 )
 
 type Client struct {
-	url           string
-	urlGetProduct string
-	token         string
+	url              string
+	getProductClient *clientwrapper.Wrapper[ProductRequest, ProductInfoResponse]
+	token            string
 }
 
 func New(url string, token string) *Client {
 	return &Client{
-		url:           url,
-		urlGetProduct: url + "/get_product",
-		token:         token,
+		url:              url,
+		getProductClient: clientwrapper.New[ProductRequest, ProductInfoResponse](url + "/get_product"),
+		token:            token,
 	}
 }
 
@@ -41,31 +38,9 @@ func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, e
 		SKU:   sku,
 	}
 
-	rawJSON, err := json.Marshal(request)
+	response, err := c.getProductClient.Post(ctx, request)
 	if err != nil {
-		return service.Product{}, errors.Wrap(err, "marshaling json")
-	}
-
-	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, c.urlGetProduct, bytes.NewBuffer(rawJSON))
-	if err != nil {
-		return service.Product{}, errors.Wrap(err, "creating http request")
-	}
-
-	httpResponse, err := http.DefaultClient.Do(httpRequest)
-	if err != nil {
-		return service.Product{}, errors.Wrap(err, "calling http")
-	}
-	defer httpResponse.Body.Close()
-
-	if httpResponse.StatusCode != http.StatusOK {
-		return service.Product{}, fmt.Errorf("wrong status code: %d", httpResponse.StatusCode)
-	}
-
-	var response ProductInfoResponse
-
-	err = json.NewDecoder(httpResponse.Body).Decode(&response)
-	if err != nil {
-		return service.Product{}, errors.Wrap(err, "decoding json")
+		return service.Product{}, errors.Wrap(err, "making loms.createOrder request")
 	}
 
 	return service.Product{

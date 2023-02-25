@@ -1,27 +1,24 @@
 package lomsclient
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 	"route256/checkout/internal/service"
+	"route256/libs/clientwrapper"
 
 	"github.com/pkg/errors"
 )
 
 type Client struct {
-	url            string
-	urlStocks      string
-	urlCreateOrder string
+	url               string
+	createOrderClient *clientwrapper.Wrapper[CreateOrderRequest, CreateOrderResponse]
+	stocksClient      *clientwrapper.Wrapper[StocksRequest, StocksResponse]
 }
 
 func New(url string) *Client {
 	return &Client{
-		url:            url,
-		urlStocks:      url + "/stocks",
-		urlCreateOrder: url + "/createOrder",
+		url:               url,
+		createOrderClient: clientwrapper.New[CreateOrderRequest, CreateOrderResponse](url + "/createOrder"),
+		stocksClient:      clientwrapper.New[StocksRequest, StocksResponse](url + "/stocks"),
 	}
 }
 
@@ -49,30 +46,9 @@ func (c *Client) CreateOrder(ctx context.Context, order service.Order) (int64, e
 		request.Items[i].Count = item.Count
 	}
 
-	rawJSON, err := json.Marshal(request)
+	response, err := c.createOrderClient.Post(ctx, request)
 	if err != nil {
-		return -1, errors.Wrap(err, "marshaling json")
-	}
-
-	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, c.urlCreateOrder, bytes.NewBuffer(rawJSON))
-	if err != nil {
-		return -1, errors.Wrap(err, "creating http request")
-	}
-
-	httpResponse, err := http.DefaultClient.Do(httpRequest)
-	if err != nil {
-		return -1, errors.Wrap(err, "calling http")
-	}
-	defer httpResponse.Body.Close()
-
-	if httpResponse.StatusCode != http.StatusOK {
-		return -1, fmt.Errorf("wrong status code: %d", httpResponse.StatusCode)
-	}
-
-	var response CreateOrderResponse
-	err = json.NewDecoder(httpResponse.Body).Decode(&response)
-	if err != nil {
-		return -1, errors.Wrap(err, "decoding json")
+		return -1, errors.Wrap(err, "making loms.createOrder request")
 	}
 
 	return response.OrderID, nil
@@ -94,30 +70,9 @@ type StocksResponse struct {
 func (c *Client) Stocks(ctx context.Context, sku uint32) ([]service.Stock, error) {
 	request := StocksRequest{SKU: sku}
 
-	rawJSON, err := json.Marshal(request)
+	response, err := c.stocksClient.Post(ctx, request)
 	if err != nil {
-		return nil, errors.Wrap(err, "marshaling json")
-	}
-
-	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, c.urlStocks, bytes.NewBuffer(rawJSON))
-	if err != nil {
-		return nil, errors.Wrap(err, "creating http request")
-	}
-
-	httpResponse, err := http.DefaultClient.Do(httpRequest)
-	if err != nil {
-		return nil, errors.Wrap(err, "calling http")
-	}
-	defer httpResponse.Body.Close()
-
-	if httpResponse.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("wrong status code: %d", httpResponse.StatusCode)
-	}
-
-	var response StocksResponse
-	err = json.NewDecoder(httpResponse.Body).Decode(&response)
-	if err != nil {
-		return nil, errors.Wrap(err, "decoding json")
+		return nil, errors.Wrap(err, "making loms.stocks request")
 	}
 
 	stocks := make([]service.Stock, 0, len(response.Stocks))
