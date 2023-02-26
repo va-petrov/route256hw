@@ -9,16 +9,16 @@ import (
 )
 
 type Client struct {
-	url               string
-	createOrderClient *clientwrapper.Wrapper[CreateOrderRequest, CreateOrderResponse]
-	stocksClient      *clientwrapper.Wrapper[StocksRequest, StocksResponse]
+	url         string
+	createOrder func(ctx context.Context, req CreateOrderRequest) (*CreateOrderResponse, error)
+	stocks      func(ctx context.Context, req StocksRequest) (*StocksResponse, error)
 }
 
 func New(url string) *Client {
 	return &Client{
-		url:               url,
-		createOrderClient: clientwrapper.New[CreateOrderRequest, CreateOrderResponse](url + "/createOrder"),
-		stocksClient:      clientwrapper.New[StocksRequest, StocksResponse](url + "/stocks"),
+		url:         url,
+		createOrder: clientwrapper.New[CreateOrderRequest, CreateOrderResponse](url + "/createOrder"),
+		stocks:      clientwrapper.New[StocksRequest, StocksResponse](url + "/stocks"),
 	}
 }
 
@@ -46,7 +46,7 @@ func (c *Client) CreateOrder(ctx context.Context, order service.Order) (int64, e
 		request.Items[i].Count = item.Count
 	}
 
-	response, err := c.createOrderClient.Post(ctx, request)
+	response, err := c.createOrder(ctx, request)
 	if err != nil {
 		return -1, errors.Wrap(err, "making loms.createOrder request")
 	}
@@ -70,7 +70,7 @@ type StocksResponse struct {
 func (c *Client) Stocks(ctx context.Context, sku uint32) ([]service.Stock, error) {
 	request := StocksRequest{SKU: sku}
 
-	response, err := c.stocksClient.Post(ctx, request)
+	response, err := c.stocks(ctx, request)
 	if err != nil {
 		return nil, errors.Wrap(err, "making loms.stocks request")
 	}

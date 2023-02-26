@@ -9,16 +9,16 @@ import (
 )
 
 type Client struct {
-	url              string
-	getProductClient *clientwrapper.Wrapper[ProductRequest, ProductInfoResponse]
-	token            string
+	url        string
+	getProduct func(ctx context.Context, req ProductRequest) (*ProductInfoResponse, error)
+	token      string
 }
 
 func New(url string, token string) *Client {
 	return &Client{
-		url:              url,
-		getProductClient: clientwrapper.New[ProductRequest, ProductInfoResponse](url + "/get_product"),
-		token:            token,
+		url:        url,
+		getProduct: clientwrapper.New[ProductRequest, ProductInfoResponse](url + "/get_product"),
+		token:      token,
 	}
 }
 
@@ -38,7 +38,7 @@ func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, e
 		SKU:   sku,
 	}
 
-	response, err := c.getProductClient.Post(ctx, request)
+	response, err := c.getProduct(ctx, request)
 	if err != nil {
 		return service.Product{}, errors.Wrap(err, "making loms.createOrder request")
 	}
