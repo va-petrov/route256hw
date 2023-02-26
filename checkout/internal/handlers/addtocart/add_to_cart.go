@@ -41,9 +41,5 @@ func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	log.Printf("addToCart: %+v", req)
 
 	err := h.Service.AddToCart(ctx, req.User, req.SKU, req.Count)
-	if err != nil {
-		return Response{}, err
-	}
-
-	return Response{}, nil
+	return Response{}, err
 }

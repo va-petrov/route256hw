@@ -31,9 +31,5 @@ func New(service *service.Service) *Handler {
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	log.Printf("cancelOrder: %+v", req)
 	err := h.Service.CancelOrder(ctx, req.OrderID)
-	if err != nil {
-		return Response{}, err
-	}
-
-	return Response{}, nil
+	return Response{}, err
 }
