@@ -3,6 +3,7 @@ package listorder
 import (
 	"context"
 	"log"
+	"route256/libs/validate"
 	"route256/loms/internal/service"
 )
 
@@ -11,8 +12,7 @@ type Request struct {
 }
 
 func (r Request) Validate() error {
-	// TODO: implement
-	return nil
+	return validate.OrderId(r.OrderID)
 }
 
 type OrderItem struct {

@@ -2,9 +2,9 @@ package listcart
 
 import (
 	"context"
-	"errors"
 	"log"
 	"route256/checkout/internal/service"
+	"route256/libs/validate"
 )
 
 type Handler struct {
@@ -21,15 +21,8 @@ type Request struct {
 	User int64 `json:"user"`
 }
 
-var (
-	ErrEmptyUser = errors.New("empty user")
-)
-
 func (r Request) Validate() error {
-	if r.User == 0 {
-		return ErrEmptyUser
-	}
-	return nil
+	return validate.User(r.User)
 }
 
 type CartItem struct {

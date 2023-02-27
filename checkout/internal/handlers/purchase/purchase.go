@@ -4,8 +4,7 @@ import (
 	"context"
 	"log"
 	"route256/checkout/internal/service"
-
-	"github.com/pkg/errors"
+	"route256/libs/validate"
 )
 
 type Handler struct {
@@ -22,15 +21,8 @@ type Request struct {
 	User int64 `json:"user"`
 }
 
-var (
-	ErrEmptyUser = errors.New("empty user")
-)
-
 func (r Request) Validate() error {
-	if r.User == 0 {
-		return ErrEmptyUser
-	}
-	return nil
+	return validate.User(r.User)
 }
 
 type Response struct {

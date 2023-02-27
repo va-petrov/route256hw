@@ -3,6 +3,7 @@ package createorder
 import (
 	"context"
 	"log"
+	"route256/libs/validate"
 	"route256/loms/internal/service"
 )
 
@@ -17,8 +18,15 @@ type Request struct {
 }
 
 func (r Request) Validate() error {
-	// TODO: implement
-	return nil
+	err := validate.User(r.User)
+	if len(r.Items) == 0 {
+		err = validate.Combine(err, validate.ErrEmptyItemsList)
+	} else {
+		for _, item := range r.Items {
+			err = validate.Combine(err, validate.SKU(item.SKU))
+		}
+	}
+	return err
 }
 
 type Response struct {

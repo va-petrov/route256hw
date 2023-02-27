@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	_ "github.com/pkg/errors"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -40,6 +43,7 @@ func (w *Wrapper[Req, Res]) ServeHTTP(resWriter http.ResponseWriter, httpReq *ht
 	err = request.Validate()
 	if err != nil {
 		resWriter.WriteHeader(http.StatusBadRequest)
+		log.Printf("Bad request: %v", err)
 		writeErrorText(resWriter, "validating request", err)
 		return
 	}
@@ -66,7 +70,7 @@ func writeErrorText(w http.ResponseWriter, text string, err error) {
 	buf := bytes.NewBufferString(text)
 
 	buf.WriteString(": ")
-	buf.WriteString(err.Error())
+	buf.WriteString(fmt.Sprintf("%v", err))
 	buf.WriteByte('\n')
 
 	w.Write(buf.Bytes())

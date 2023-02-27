@@ -2,9 +2,9 @@ package addtocart
 
 import (
 	"context"
-	"errors"
 	"log"
 	"route256/checkout/internal/service"
+	"route256/libs/validate"
 )
 
 type Handler struct {
@@ -23,15 +23,8 @@ type Request struct {
 	Count uint16 `json:"count"`
 }
 
-var (
-	ErrEmptyUser = errors.New("empty user")
-)
-
 func (r Request) Validate() error {
-	if r.User == 0 {
-		return ErrEmptyUser
-	}
-	return nil
+	return validate.Combine(validate.User(r.User), validate.SKU(r.SKU))
 }
 
 type Response struct {
