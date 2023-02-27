@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	_ "github.com/pkg/errors"
 	"io"
 	"log"
 	"net/http"
