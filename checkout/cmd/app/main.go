@@ -25,6 +25,7 @@ func main() {
 	lomsClient := lomsclient.New(config.ConfigData.Services.Loms)
 	productsClient := productsclient.New(config.ConfigData.Services.ProductService.Url,
 		config.ConfigData.Services.ProductService.Token)
+	defer productsClient.Close()
 
 	checkoutService := service.New(lomsClient, productsClient)
 

@@ -4,21 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/homework.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/checkout/v1/service.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/loms/v1/service.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/product/service.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Homework-1.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-2]: grpc project init">
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.work" beforeDir="false" afterPath="$PROJECT_DIR$/go.work" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/loms/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +40,8 @@
     "last_opened_file_path": "/home/vasya/go/homework/pkg",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -64,6 +55,10 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="[GOHW-2]: grpc project init" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-2]: grpc project init" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

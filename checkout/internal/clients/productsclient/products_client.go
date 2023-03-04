@@ -2,23 +2,31 @@ package productsclient
 
 import (
 	"context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"log"
 	"route256/checkout/internal/service"
-	"route256/libs/clientwrapper"
+	productServiceAPI "route256/pkg/product"
 
 	"github.com/pkg/errors"
 )
 
 type Client struct {
-	url        string
-	getProduct func(ctx context.Context, req ProductRequest) (*ProductInfoResponse, error)
-	token      string
+	productClient productServiceAPI.ProductServiceClient
+	conn          *grpc.ClientConn
+	token         string
 }
 
 func New(url string, token string) *Client {
+	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("failed to connect to product server: %v", err)
+	}
+
 	return &Client{
-		url:        url,
-		getProduct: clientwrapper.New[ProductRequest, ProductInfoResponse](url + "/get_product"),
-		token:      token,
+		productClient: productServiceAPI.NewProductServiceClient(conn),
+		conn:          conn,
+		token:         token,
 	}
 }
 
@@ -33,18 +41,22 @@ type ProductInfoResponse struct {
 }
 
 func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, error) {
-	request := ProductRequest{
+	request := productServiceAPI.GetProductRequest{
 		Token: c.token,
-		SKU:   sku,
+		Sku:   sku,
 	}
 
-	response, err := c.getProduct(ctx, request)
+	response, err := c.productClient.GetProduct(ctx, &request)
 	if err != nil {
-		return service.Product{}, errors.Wrap(err, "making loms.createOrder request")
+		return service.Product{}, errors.Wrap(err, "making loms.getProduct gRPC request")
 	}
 
 	return service.Product{
 		Name:  response.Name,
 		Price: response.Price,
 	}, nil
+}
+
+func (c *Client) Close() error {
+	return c.conn.Close()
 }
