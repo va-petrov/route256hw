@@ -2,18 +2,19 @@ package main
 
 import (
 	"log"
-	"net/http"
-	"route256/libs/srvwrapper"
+	"net"
+	"route256/libs/interceptors"
+	"route256/loms/internal/api/loms_v1"
 	"route256/loms/internal/config"
-	"route256/loms/internal/handlers/cancelorder"
-	"route256/loms/internal/handlers/createorder"
-	"route256/loms/internal/handlers/listorder"
-	"route256/loms/internal/handlers/orderpayed"
-	"route256/loms/internal/handlers/stocks"
 	"route256/loms/internal/service"
+	desc "route256/pkg/loms_v1"
+
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
-const port = ":8081"
+const grpcPort = ":8081"
 
 func main() {
 	err := config.Init()
@@ -23,13 +24,27 @@ func main() {
 
 	lomsService := service.New()
 
-	http.Handle("/createOrder", srvwrapper.New(createorder.New(lomsService).Handle))
-	http.Handle("/listOrder", srvwrapper.New(listorder.New(lomsService).Handle))
-	http.Handle("/orderPayed", srvwrapper.New(orderpayed.New(lomsService).Handle))
-	http.Handle("/cancelOrder", srvwrapper.New(cancelorder.New(lomsService).Handle))
-	http.Handle("/stocks", srvwrapper.New(stocks.New(lomsService).Handle))
+	loms_v1.NewLOMSV1(lomsService)
 
-	log.Println("listening http at", port)
-	err = http.ListenAndServe(port, nil)
-	log.Fatal("cannot listen http", err)
+	lis, err := net.Listen("tcp", grpcPort)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(
+			grpcMiddleware.ChainUnaryServer(
+				interceptors.LoggingInterceptor,
+			),
+		),
+	)
+
+	reflection.Register(s)
+	desc.RegisterLOMSServiceServer(s, loms_v1.NewLOMSV1(lomsService))
+
+	log.Printf("server listening at %v", lis.Addr())
+
+	if err = s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

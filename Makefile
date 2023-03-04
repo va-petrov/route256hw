@@ -43,18 +43,18 @@ generate:
 	--plugin=protoc-gen-go=bin/protoc-gen-go \
 	--go-grpc_out=pkg/checkout_v1 --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
-	api/checkout/v1/service.proto
+	api/checkout/v1/checkout_v1_service.proto
 	mkdir -p pkg/loms_v1
 	protoc -I api/loms/v1 -I vendor-proto \
 	--go_out=pkg/loms_v1 --go_opt=paths=source_relative \
 	--plugin=protoc-gen-go=bin/protoc-gen-go \
 	--go-grpc_out=pkg/loms_v1 --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
-	api/loms/v1/service.proto
+	api/loms/v1/loms_v1_service.proto
 	mkdir -p pkg/product
 	protoc -I api/product -I vendor-proto \
 	--go_out=pkg/product --go_opt=paths=source_relative \
 	--plugin=protoc-gen-go=bin/protoc-gen-go \
 	--go-grpc_out=pkg/product --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
-	api/product/service.proto
+	api/product/product_service.proto

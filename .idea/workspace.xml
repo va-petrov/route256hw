@@ -4,16 +4,65 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-2]: grpc project init">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-2]: all services working by gRPC">
+      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/add_to_cart.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/delete_from_cart.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/list_cart.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/purchase.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libs/go.sum" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libs/interceptors/logging.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/cancel_order.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/create_order.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/list_order.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/order_payed.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/stocks.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/checkout/v1/service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/api/checkout/v1/checkout_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/loms/v1/service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/api/loms/v1/loms_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/product/service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/api/product/product_service.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/addtocart/add_to_cart.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/deletefromcart/delete_from_cart.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/listcart/list_cart.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/purchase/purchase.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/clientwrapper/client_wrapper.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/libs/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/srvwrapper/server_wrapper.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/validate/errors.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/validate/orderid.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/validate/sku.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/validate/user.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/loms/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/loms/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/cancelorder/cancel_order.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/createorder/create_order.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/listorder/list_order.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/orderpayed/order_payed.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/stocks/stocks.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/checkout_v1/service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/checkout_v1/checkout_v1_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/checkout_v1/service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/loms_v1/service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/loms_v1/loms_v1_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/loms_v1/service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/loms_v1/loms_v1_service_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/product/service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/product/product_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/product/service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/product/product_service_grpc.pb.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" url="file:///usr/local/go" />
   <component name="Git.Settings">
@@ -29,6 +78,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
@@ -37,7 +87,7 @@
     "WebServerToolWindowFactoryState": "false",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vasya/go/homework/pkg",
+    "last_opened_file_path": "/home/vasya/go/homework/checkout/internal/api/checkout_v1",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -46,11 +96,28 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/checkout/internal/api/checkout_v1" />
+      <recent name="$PROJECT_DIR$/loms/internal/api/loms_v1" />
       <recent name="$PROJECT_DIR$/pkg" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/api/product" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="go build route256/loms/internal/handlers" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="homework" />
+      <working_directory value="$PROJECT_DIR$/loms" />
+      <kind value="PACKAGE" />
+      <package value="route256/loms/internal/handlers" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build route256/loms/internal/handlers" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
@@ -58,7 +125,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[GOHW-2]: grpc project init" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-2]: grpc project init" />
+    <MESSAGE value="[GOHW-2]: product service client going gRPC way" />
+    <MESSAGE value="[GOHW-2]: all services working by gRPC" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-2]: all services working by gRPC" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

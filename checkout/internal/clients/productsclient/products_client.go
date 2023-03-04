@@ -2,13 +2,13 @@ package productsclient
 
 import (
 	"context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"route256/checkout/internal/service"
 	productServiceAPI "route256/pkg/product"
 
 	"github.com/pkg/errors"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Client struct {
