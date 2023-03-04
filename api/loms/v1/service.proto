@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option go_package="route256/pkg/loms_v1;loms_v1";
+package route256.checkout_v1;
+
+service LOMSService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc ListOrder(ListOrderRequest) returns (ListOrderResponse);
+  rpc OrderPayed(OrderPayedRequest) returns (OrderPayedResponse);
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+  rpc Stocks(StocksRequest) returns (StocksResponse);
+}
+
+message OrderItem {
+  uint32 sku = 1;
+  uint32 count = 2;
+}
+
+message CreateOrderRequest {
+  int64 user = 1;
+  repeated OrderItem items = 2;
+}
+
+message CreateOrderResponse {
+  int64 orderID = 1;
+}
+
+message ListOrderRequest {
+  int64 orderID = 1;
+}
+
+message ListOrderResponse {
+  string status = 1;
+  int64 user = 2;
+  repeated OrderItem items = 3;
+}
+
+message OrderPayedRequest {
+  int64 orderID = 1;
+}
+
+message OrderPayedResponse {
+}
+
+message CancelOrderRequest {
+  int64 orderID = 1;
+}
+
+message CancelOrderResponse {
+}
+
+message StocksRequest {
+  uint32 sku = 1;
+}
+
+message StocksItem {
+  int64 warehouseID = 1;
+  uint64 count = 2;
+}
+
+message StocksResponse {
+  repeated StocksItem stocks = 1;
+}

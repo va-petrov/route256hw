@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option go_package="route256/pkg/checkout_v1;checkout_v1";
+package route256.checkout_v1;
+
+service CheckoutService {
+  rpc AddToCart(AddToCartRequest) returns (AddToCartResponse);
+  rpc DeleteFromCart(DeleteFromCartRequest) returns (DeleteFromCartResponse);
+  rpc ListCart(ListCartRequest) returns (ListCartResponse);
+  rpc Purchase(PurchaseRequest) returns (PurchaseResponse);
+}
+
+message AddToCartRequest {
+  int64 user = 1;
+  uint32 sku = 2;
+  uint32 count = 3;
+}
+
+message AddToCartResponse {
+}
+
+message DeleteFromCartRequest {
+  int64 user = 1;
+  uint32 sku = 2;
+  uint32 count = 3;
+}
+
+message DeleteFromCartResponse {
+}
+
+message ListCartRequest {
+  int64 user = 1;
+}
+
+message CartItem {
+  uint32 sku = 1;
+  uint32 count = 2;
+  string name = 3;
+  uint32 price = 4;
+}
+
+message ListCartResponse {
+  repeated CartItem items = 1;
+  uint32 totalPrice = 2;
+}
+
+message PurchaseRequest {
+  int64 user = 1;
+}
+
+message PurchaseResponse {
+  int64 orderID = 1;
+}
