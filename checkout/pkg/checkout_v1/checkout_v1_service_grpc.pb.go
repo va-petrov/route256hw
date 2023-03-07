@@ -8,7 +8,6 @@ package checkout_v1
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -23,9 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CheckoutServiceClient interface {
+	// Добавить товар в корзину определенного пользователя
 	AddToCart(ctx context.Context, in *AddToCartRequest, opts ...grpc.CallOption) (*AddToCartResponse, error)
+	// Удалить товар из корзины определенного пользователя
 	DeleteFromCart(ctx context.Context, in *DeleteFromCartRequest, opts ...grpc.CallOption) (*DeleteFromCartResponse, error)
+	// Показать список товаров в корзине с именами и ценами
 	ListCart(ctx context.Context, in *ListCartRequest, opts ...grpc.CallOption) (*ListCartResponse, error)
+	// Оформить заказ по всем товарам корзины
 	Purchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*PurchaseResponse, error)
 }
 
@@ -77,9 +80,13 @@ func (c *checkoutServiceClient) Purchase(ctx context.Context, in *PurchaseReques
 // All implementations must embed UnimplementedCheckoutServiceServer
 // for forward compatibility
 type CheckoutServiceServer interface {
+	// Добавить товар в корзину определенного пользователя
 	AddToCart(context.Context, *AddToCartRequest) (*AddToCartResponse, error)
+	// Удалить товар из корзины определенного пользователя
 	DeleteFromCart(context.Context, *DeleteFromCartRequest) (*DeleteFromCartResponse, error)
+	// Показать список товаров в корзине с именами и ценами
 	ListCart(context.Context, *ListCartRequest) (*ListCartResponse, error)
+	// Оформить заказ по всем товарам корзины
 	Purchase(context.Context, *PurchaseRequest) (*PurchaseResponse, error)
 	mustEmbedUnimplementedCheckoutServiceServer()
 }

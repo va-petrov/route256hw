@@ -8,7 +8,6 @@ package loms_v1
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -23,10 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LOMSServiceClient interface {
+	// Создает новый заказ для пользователя из списка переданных товаров
 	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
+	// Показывает информацию по заказу
 	ListOrder(ctx context.Context, in *ListOrderRequest, opts ...grpc.CallOption) (*ListOrderResponse, error)
+	// Помечает заказ оплаченным
 	OrderPayed(ctx context.Context, in *OrderPayedRequest, opts ...grpc.CallOption) (*OrderPayedResponse, error)
+	// Отменяет заказ, снимает резерв со всех товаров в заказе
 	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
+	// Возвращает количество товаров, которые можно купить с разных складов
 	Stocks(ctx context.Context, in *StocksRequest, opts ...grpc.CallOption) (*StocksResponse, error)
 }
 
@@ -87,10 +91,15 @@ func (c *lOMSServiceClient) Stocks(ctx context.Context, in *StocksRequest, opts 
 // All implementations must embed UnimplementedLOMSServiceServer
 // for forward compatibility
 type LOMSServiceServer interface {
+	// Создает новый заказ для пользователя из списка переданных товаров
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
+	// Показывает информацию по заказу
 	ListOrder(context.Context, *ListOrderRequest) (*ListOrderResponse, error)
+	// Помечает заказ оплаченным
 	OrderPayed(context.Context, *OrderPayedRequest) (*OrderPayedResponse, error)
+	// Отменяет заказ, снимает резерв со всех товаров в заказе
 	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
+	// Возвращает количество товаров, которые можно купить с разных складов
 	Stocks(context.Context, *StocksRequest) (*StocksResponse, error)
 	mustEmbedUnimplementedLOMSServiceServer()
 }

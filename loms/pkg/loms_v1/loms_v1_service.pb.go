@@ -7,11 +7,10 @@
 package loms_v1
 
 import (
-	reflect "reflect"
-	sync "sync"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -21,12 +20,15 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Товар в заказе
 type OrderItem struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Sku   uint32 `protobuf:"varint,1,opt,name=sku,proto3" json:"sku,omitempty"`
+	// Код товара
+	Sku uint32 `protobuf:"varint,1,opt,name=sku,proto3" json:"sku,omitempty"`
+	// Количество
 	Count uint32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 }
 
@@ -76,12 +78,15 @@ func (x *OrderItem) GetCount() uint32 {
 	return 0
 }
 
+// Запрос на создание заказа
 type CreateOrderRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	User  int64        `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
+	// ID пользователя
+	User int64 `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
+	// Товары включаемые в заказ
 	Items []*OrderItem `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
 }
 
@@ -131,11 +136,13 @@ func (x *CreateOrderRequest) GetItems() []*OrderItem {
 	return nil
 }
 
+// Ответ на запрос создания заказа
 type CreateOrderResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID заказа
 	OrderID int64 `protobuf:"varint,1,opt,name=orderID,proto3" json:"orderID,omitempty"`
 }
 
@@ -178,11 +185,13 @@ func (x *CreateOrderResponse) GetOrderID() int64 {
 	return 0
 }
 
+// Запрос на получение содержимого заказа
 type ListOrderRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID заказа
 	OrderID int64 `protobuf:"varint,1,opt,name=orderID,proto3" json:"orderID,omitempty"`
 }
 
@@ -225,14 +234,18 @@ func (x *ListOrderRequest) GetOrderID() int64 {
 	return 0
 }
 
+// Ответ на запрос на получение содержимого заказа
 type ListOrderResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status string       `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
-	User   int64        `protobuf:"varint,2,opt,name=user,proto3" json:"user,omitempty"`
-	Items  []*OrderItem `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
+	// Стату заказа
+	Status string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	// ID пользователя
+	User int64 `protobuf:"varint,2,opt,name=user,proto3" json:"user,omitempty"`
+	// Товары в заказе
+	Items []*OrderItem `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
 }
 
 func (x *ListOrderResponse) Reset() {
@@ -288,11 +301,13 @@ func (x *ListOrderResponse) GetItems() []*OrderItem {
 	return nil
 }
 
+// Запрос на оплату заказа
 type OrderPayedRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID заказа
 	OrderID int64 `protobuf:"varint,1,opt,name=orderID,proto3" json:"orderID,omitempty"`
 }
 
@@ -335,6 +350,7 @@ func (x *OrderPayedRequest) GetOrderID() int64 {
 	return 0
 }
 
+// Ответ на запрос на оплату заказа
 type OrderPayedResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -373,11 +389,13 @@ func (*OrderPayedResponse) Descriptor() ([]byte, []int) {
 	return file_loms_v1_service_proto_rawDescGZIP(), []int{6}
 }
 
+// Запрос на отмену заказа
 type CancelOrderRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID заказа
 	OrderID int64 `protobuf:"varint,1,opt,name=orderID,proto3" json:"orderID,omitempty"`
 }
 
@@ -420,6 +438,7 @@ func (x *CancelOrderRequest) GetOrderID() int64 {
 	return 0
 }
 
+// Ответ на запрос на отмену заказа
 type CancelOrderResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -458,11 +477,13 @@ func (*CancelOrderResponse) Descriptor() ([]byte, []int) {
 	return file_loms_v1_service_proto_rawDescGZIP(), []int{8}
 }
 
+// Запрос на получение остатков товара на складах
 type StocksRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Код товара
 	Sku uint32 `protobuf:"varint,1,opt,name=sku,proto3" json:"sku,omitempty"`
 }
 
@@ -505,13 +526,16 @@ func (x *StocksRequest) GetSku() uint32 {
 	return 0
 }
 
+// Остаток товара на складе
 type StocksItem struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WarehouseID int64  `protobuf:"varint,1,opt,name=warehouseID,proto3" json:"warehouseID,omitempty"`
-	Count       uint64 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	// ID склаад
+	WarehouseID int64 `protobuf:"varint,1,opt,name=warehouseID,proto3" json:"warehouseID,omitempty"`
+	// Количество
+	Count uint64 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 }
 
 func (x *StocksItem) Reset() {
@@ -560,11 +584,13 @@ func (x *StocksItem) GetCount() uint64 {
 	return 0
 }
 
+// Ответ на запрос на получение остатков товара на складах
 type StocksResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Остатки товара на складах
 	Stocks []*StocksItem `protobuf:"bytes,1,rep,name=stocks,proto3" json:"stocks,omitempty"`
 }
 

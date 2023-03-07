@@ -7,11 +7,10 @@
 package checkout_v1
 
 import (
-	reflect "reflect"
-	sync "sync"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -21,13 +20,17 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Запрос на добавление товара в корзину
 type AddToCartRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	User  int64  `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
-	Sku   uint32 `protobuf:"varint,2,opt,name=sku,proto3" json:"sku,omitempty"`
+	// ID пользователя
+	User int64 `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
+	// Код товара
+	Sku uint32 `protobuf:"varint,2,opt,name=sku,proto3" json:"sku,omitempty"`
+	// Количество
 	Count uint32 `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
 }
 
@@ -84,6 +87,7 @@ func (x *AddToCartRequest) GetCount() uint32 {
 	return 0
 }
 
+// Ответ на запрос на добавление товара в корзину
 type AddToCartResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -122,13 +126,17 @@ func (*AddToCartResponse) Descriptor() ([]byte, []int) {
 	return file_checkout_v1_service_proto_rawDescGZIP(), []int{1}
 }
 
+// Запрос на удаление товара из корзины
 type DeleteFromCartRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	User  int64  `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
-	Sku   uint32 `protobuf:"varint,2,opt,name=sku,proto3" json:"sku,omitempty"`
+	// ID Пользователя
+	User int64 `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
+	// Код товара
+	Sku uint32 `protobuf:"varint,2,opt,name=sku,proto3" json:"sku,omitempty"`
+	// Количество
 	Count uint32 `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
 }
 
@@ -185,6 +193,7 @@ func (x *DeleteFromCartRequest) GetCount() uint32 {
 	return 0
 }
 
+// Ответ на запрос на удаление товара из корзины
 type DeleteFromCartResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -223,11 +232,13 @@ func (*DeleteFromCartResponse) Descriptor() ([]byte, []int) {
 	return file_checkout_v1_service_proto_rawDescGZIP(), []int{3}
 }
 
+// Запрос на получение содержимого корзины
 type ListCartRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID пользвоателя
 	User int64 `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
 }
 
@@ -270,14 +281,19 @@ func (x *ListCartRequest) GetUser() int64 {
 	return 0
 }
 
+// Товар лежащий в корзине
 type CartItem struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Sku   uint32 `protobuf:"varint,1,opt,name=sku,proto3" json:"sku,omitempty"`
+	// Код товара
+	Sku uint32 `protobuf:"varint,1,opt,name=sku,proto3" json:"sku,omitempty"`
+	// Количество
 	Count uint32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
-	Name  string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// Наименование
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// Цена
 	Price uint32 `protobuf:"varint,4,opt,name=price,proto3" json:"price,omitempty"`
 }
 
@@ -341,13 +357,16 @@ func (x *CartItem) GetPrice() uint32 {
 	return 0
 }
 
+// Ответ на запрос на получение содержимого корзины
 type ListCartResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items      []*CartItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	TotalPrice uint32      `protobuf:"varint,2,opt,name=totalPrice,proto3" json:"totalPrice,omitempty"`
+	// Товары лежащие в корзине
+	Items []*CartItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	// Общая стоимость товаров в корзине
+	TotalPrice uint32 `protobuf:"varint,2,opt,name=totalPrice,proto3" json:"totalPrice,omitempty"`
 }
 
 func (x *ListCartResponse) Reset() {
@@ -396,11 +415,13 @@ func (x *ListCartResponse) GetTotalPrice() uint32 {
 	return 0
 }
 
+// Запрос на оформление заказа из содержимого корзины
 type PurchaseRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID пользователя
 	User int64 `protobuf:"varint,1,opt,name=user,proto3" json:"user,omitempty"`
 }
 
@@ -443,11 +464,13 @@ func (x *PurchaseRequest) GetUser() int64 {
 	return 0
 }
 
+// Ответ на запрос на оформление заказа
 type PurchaseResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID заказа
 	OrderID int64 `protobuf:"varint,1,opt,name=orderID,proto3" json:"orderID,omitempty"`
 }
 

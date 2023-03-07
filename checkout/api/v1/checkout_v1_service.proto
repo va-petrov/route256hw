@@ -3,51 +3,80 @@ syntax = "proto3";
 option go_package="route256/checkout/pkg/checkout_v1;checkout_v1";
 package route256.checkout_v1;
 
+// Сервис отвечает за корзину и оформление заказа */
 service CheckoutService {
+  // Добавить товар в корзину определенного пользователя
   rpc AddToCart(AddToCartRequest) returns (AddToCartResponse);
+  // Удалить товар из корзины определенного пользователя
   rpc DeleteFromCart(DeleteFromCartRequest) returns (DeleteFromCartResponse);
+  // Показать список товаров в корзине с именами и ценами
   rpc ListCart(ListCartRequest) returns (ListCartResponse);
+  // Оформить заказ по всем товарам корзины
   rpc Purchase(PurchaseRequest) returns (PurchaseResponse);
 }
 
+// Запрос на добавление товара в корзину
 message AddToCartRequest {
+  // ID пользователя
   int64 user = 1;
+  // Код товара
   uint32 sku = 2;
+  // Количество
   uint32 count = 3;
 }
 
+// Ответ на запрос на добавление товара в корзину
 message AddToCartResponse {
 }
 
+// Запрос на удаление товара из корзины
 message DeleteFromCartRequest {
+  // ID Пользователя
   int64 user = 1;
+  // Код товара
   uint32 sku = 2;
+  // Количество
   uint32 count = 3;
 }
 
+// Ответ на запрос на удаление товара из корзины
 message DeleteFromCartResponse {
 }
 
+// Запрос на получение содержимого корзины
 message ListCartRequest {
+  // ID пользвоателя
   int64 user = 1;
 }
 
+// Товар лежащий в корзине
 message CartItem {
+  // Код товара
   uint32 sku = 1;
+  // Количество
   uint32 count = 2;
+  // Наименование
   string name = 3;
+  // Цена
   uint32 price = 4;
 }
 
+// Ответ на запрос на получение содержимого корзины
 message ListCartResponse {
+  // Товары лежащие в корзине
   repeated CartItem items = 1;
+  // Общая стоимость товаров в корзине
   uint32 totalPrice = 2;
 }
 
+// Запрос на оформление заказа из содержимого корзины
 message PurchaseRequest {
+  // ID пользователя
   int64 user = 1;
 }
 
+// Ответ на запрос на оформление заказа
 message PurchaseResponse {
+  // ID заказа
   int64 orderID = 1;
 }
