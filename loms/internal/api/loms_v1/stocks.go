@@ -2,7 +2,7 @@ package loms_v1
 
 import (
 	"context"
-	"route256/pkg/loms_v1"
+	"route256/loms/pkg/loms_v1"
 )
 
 func (i *Implementation) Stocks(ctx context.Context, req *loms_v1.StocksRequest) (*loms_v1.StocksResponse, error) {

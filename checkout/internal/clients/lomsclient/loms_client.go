@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"route256/checkout/internal/service"
-	lomsServiceAPI "route256/pkg/loms_v1"
+	lomsServiceAPI "route256/loms/pkg/loms_v1"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"

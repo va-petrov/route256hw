@@ -7,7 +7,7 @@ import (
 	"route256/loms/internal/api/loms_v1"
 	"route256/loms/internal/config"
 	"route256/loms/internal/service"
-	desc "route256/pkg/loms_v1"
+	desc "route256/loms/pkg/loms_v1"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package="route256/pkg/checkout_v1;checkout_v1";
+option go_package="route256/checkout/pkg/checkout_v1;checkout_v1";
 package route256.checkout_v1;
 
 service CheckoutService {

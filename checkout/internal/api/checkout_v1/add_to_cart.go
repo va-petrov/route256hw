@@ -2,7 +2,7 @@ package checkout_v1
 
 import (
 	"context"
-	"route256/pkg/checkout_v1"
+	"route256/checkout/pkg/checkout_v1"
 )
 
 func (i *Implementation) AddToCart(ctx context.Context, req *checkout_v1.AddToCartRequest) (*checkout_v1.AddToCartResponse, error) {

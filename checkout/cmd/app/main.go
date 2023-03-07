@@ -8,8 +8,8 @@ import (
 	"route256/checkout/internal/clients/productsclient"
 	"route256/checkout/internal/config"
 	"route256/checkout/internal/service"
+	desc "route256/checkout/pkg/checkout_v1"
 	"route256/libs/interceptors"
-	desc "route256/pkg/checkout_v1"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"

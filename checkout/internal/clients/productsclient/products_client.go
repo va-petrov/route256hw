@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"route256/checkout/internal/service"
-	productServiceAPI "route256/pkg/product"
+	productServiceAPI "route256/product-service/pkg/product"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -20,7 +20,7 @@ type Client struct {
 func New(url string, token string) *Client {
 	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("failed to connect to product server: %v", err)
+		log.Fatalf("failed to connect to product-service server: %v", err)
 	}
 
 	return &Client{

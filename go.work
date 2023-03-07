@@ -5,5 +5,5 @@ use (
 	./libs
 	./loms
 	./notifications
-	./pkg
+	product-service
 )

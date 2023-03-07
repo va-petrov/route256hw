@@ -3,7 +3,7 @@ package loms_v1
 import (
 	"context"
 	"route256/loms/internal/service"
-	"route256/pkg/loms_v1"
+	"route256/loms/pkg/loms_v1"
 )
 
 func (i *Implementation) CreateOrder(ctx context.Context, req *loms_v1.CreateOrderRequest) (*loms_v1.CreateOrderResponse, error) {

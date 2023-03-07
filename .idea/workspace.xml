@@ -5,52 +5,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-2]: all services working by gRPC">
-      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/add_to_cart.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/delete_from_cart.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/list_cart.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/purchase.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/libs/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/libs/interceptors/logging.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/cancel_order.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/create_order.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/list_order.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/order_payed.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/stocks.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/product-service/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/checkout/v1/service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/api/checkout/v1/checkout_v1_service.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/loms/v1/service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/api/loms/v1/loms_v1_service.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/product/service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/api/product/product_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/checkout/v1/checkout_v1_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/api/v1/checkout_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/loms/v1/loms_v1_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/loms/api/v1/loms_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/product/product_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/api/product/product_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/add_to_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/add_to_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/delete_from_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/delete_from_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/list_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/list_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/purchase.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/purchase.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/addtocart/add_to_cart.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/deletefromcart/delete_from_cart.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/listcart/list_cart.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/handlers/purchase/purchase.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/clientwrapper/client_wrapper.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/libs/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/srvwrapper/server_wrapper.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/validate/errors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/validate/orderid.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/validate/sku.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/validate/user.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.work" beforeDir="false" afterPath="$PROJECT_DIR$/go.work" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/loms/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loms/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/cmd/app/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loms/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/loms/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loms/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/loms/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/cancelorder/cancel_order.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/createorder/create_order.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/listorder/list_order.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/orderpayed/order_payed.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/handlers/stocks/stocks.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/checkout_v1/service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/checkout_v1/checkout_v1_service.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/checkout_v1/service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/loms_v1/service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/loms_v1/loms_v1_service.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/loms_v1/service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/loms_v1/loms_v1_service_grpc.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/product/service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/product/product_service.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/product/service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/product/product_service_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/cancel_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/cancel_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/create_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/create_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/list_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/list_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/order_payed.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/order_payed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/stocks.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/stocks.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/checkout_v1/checkout_v1_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/go.sum" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/loms_v1/loms_v1_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/loms_v1/loms_v1_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/product/product_service.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/product/product_service_grpc.pb.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +77,7 @@
     "WebServerToolWindowFactoryState": "false",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vasya/go/homework/checkout/internal/api/checkout_v1",
+    "last_opened_file_path": "/home/vasya/go/homework/loms/api",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -96,12 +86,17 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/product-service" />
       <recent name="$PROJECT_DIR$/checkout/internal/api/checkout_v1" />
       <recent name="$PROJECT_DIR$/loms/internal/api/loms_v1" />
       <recent name="$PROJECT_DIR$/pkg" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/api/product" />
+      <recent name="$PROJECT_DIR$/loms/api" />
+      <recent name="$PROJECT_DIR$/checkout/api" />
+      <recent name="$PROJECT_DIR$/checkout/pkg" />
+      <recent name="$PROJECT_DIR$/loms/pkg" />
+      <recent name="$PROJECT_DIR$/product-service/api" />
     </key>
   </component>
   <component name="RunManager">

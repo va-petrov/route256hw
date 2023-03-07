@@ -2,7 +2,7 @@ package loms_v1
 
 import (
 	"route256/loms/internal/service"
-	"route256/pkg/loms_v1"
+	"route256/loms/pkg/loms_v1"
 )
 
 type Implementation struct {
