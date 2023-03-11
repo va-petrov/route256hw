@@ -2,19 +2,21 @@ package main
 
 import (
 	"log"
-	"net/http"
+	"net"
+	"route256/checkout/internal/api/checkout_v1"
 	"route256/checkout/internal/clients/lomsclient"
 	"route256/checkout/internal/clients/productsclient"
 	"route256/checkout/internal/config"
-	"route256/checkout/internal/handlers/addtocart"
-	"route256/checkout/internal/handlers/deletefromcart"
-	"route256/checkout/internal/handlers/listcart"
-	"route256/checkout/internal/handlers/purchase"
 	"route256/checkout/internal/service"
-	"route256/libs/srvwrapper"
+	desc "route256/checkout/pkg/checkout_v1"
+	"route256/libs/interceptors"
+
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
-const port = ":8080"
+const grpcPort = ":8080"
 
 func main() {
 	err := config.Init()
@@ -23,21 +25,33 @@ func main() {
 	}
 
 	lomsClient := lomsclient.New(config.ConfigData.Services.Loms)
+	defer lomsClient.Close()
 	productsClient := productsclient.New(config.ConfigData.Services.ProductService.Url,
 		config.ConfigData.Services.ProductService.Token)
-
+	defer productsClient.Close()
 	checkoutService := service.New(lomsClient, productsClient)
 
-	purchaseHandler := purchase.New(checkoutService)
-	http.Handle("/purchase", srvwrapper.New(purchaseHandler.Handle))
-	addToCartHandler := addtocart.New(checkoutService)
-	http.Handle("/addToCart", srvwrapper.New(addToCartHandler.Handle))
-	deleteFromCartHandler := deletefromcart.New(checkoutService)
-	http.Handle("/deleteFromCart", srvwrapper.New(deleteFromCartHandler.Handle))
-	listHandler := listcart.New(checkoutService)
-	http.Handle("/listCart", srvwrapper.New(listHandler.Handle))
+	checkout_v1.NewCheckoutV1(checkoutService)
 
-	log.Println("listening http at", port)
-	err = http.ListenAndServe(port, nil)
-	log.Fatal("cannot listen http", err)
+	lis, err := net.Listen("tcp", grpcPort)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(
+			grpcMiddleware.ChainUnaryServer(
+				interceptors.LoggingInterceptor,
+			),
+		),
+	)
+
+	reflection.Register(s)
+	desc.RegisterCheckoutServiceServer(s, checkout_v1.NewCheckoutV1(checkoutService))
+
+	log.Printf("server listening at %v", lis.Addr())
+
+	if err = s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

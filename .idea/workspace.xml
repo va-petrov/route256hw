@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-2]: refactor proto and protoc generated files into service dirs">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/api/v1/checkout_v1_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/api/v1/checkout_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/api/v1/loms_v1_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/loms/api/v1/loms_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service/pkg/product/product_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/pkg/product/product_service.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service/pkg/product/product_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/pkg/product/product_service_grpc.pb.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="2MYRFDSKOECoGxX6BKYBZXhGizj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/home/vasya/go/homework/loms/api",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/product-service" />
+      <recent name="$PROJECT_DIR$/checkout/internal/api/checkout_v1" />
+      <recent name="$PROJECT_DIR$/loms/internal/api/loms_v1" />
+      <recent name="$PROJECT_DIR$/pkg" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/loms/api" />
+      <recent name="$PROJECT_DIR$/checkout/api" />
+      <recent name="$PROJECT_DIR$/checkout/pkg" />
+      <recent name="$PROJECT_DIR$/loms/pkg" />
+      <recent name="$PROJECT_DIR$/product-service/api" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="go build route256/loms/internal/handlers" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="homework" />
+      <working_directory value="$PROJECT_DIR$/loms" />
+      <kind value="PACKAGE" />
+      <package value="route256/loms/internal/handlers" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build route256/loms/internal/handlers" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="[GOHW-2]: grpc project init" />
+    <MESSAGE value="[GOHW-2]: product service client going gRPC way" />
+    <MESSAGE value="[GOHW-2]: all services working by gRPC" />
+    <MESSAGE value="[GOHW-2]: refactor proto and protoc generated files into service dirs" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-2]: refactor proto and protoc generated files into service dirs" />
+  </component>
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+</project>

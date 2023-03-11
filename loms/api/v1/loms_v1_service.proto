@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+option go_package="route256/loms/pkg/loms_v1;loms_v1";
+package route256.checkout_v1;
+
+// Сервис отвечает за учет заказов и логистику
+service LOMSService {
+  // Создает новый заказ для пользователя из списка переданных товаров
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  // Показывает информацию по заказу
+  rpc ListOrder(ListOrderRequest) returns (ListOrderResponse);
+  // Помечает заказ оплаченным
+  rpc OrderPayed(OrderPayedRequest) returns (OrderPayedResponse);
+  // Отменяет заказ, снимает резерв со всех товаров в заказе
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+  // Возвращает количество товаров, которые можно купить с разных складов
+  rpc Stocks(StocksRequest) returns (StocksResponse);
+}
+
+// Товар в заказе
+message OrderItem {
+  // Код товара
+  uint32 sku = 1;
+  // Количество
+  uint32 count = 2;
+}
+
+// Запрос на создание заказа
+message CreateOrderRequest {
+  // ID пользователя
+  int64 user = 1;
+  // Товары включаемые в заказ
+  repeated OrderItem items = 2;
+}
+
+// Ответ на запрос создания заказа
+message CreateOrderResponse {
+  // ID заказа
+  int64 orderID = 1;
+}
+
+// Запрос на получение содержимого заказа
+message ListOrderRequest {
+  // ID заказа
+  int64 orderID = 1;
+}
+
+// Ответ на запрос на получение содержимого заказа
+message ListOrderResponse {
+  // Стату заказа
+  string status = 1;
+  // ID пользователя
+  int64 user = 2;
+  // Товары в заказе
+  repeated OrderItem items = 3;
+}
+
+// Запрос на оплату заказа
+message OrderPayedRequest {
+  // ID заказа
+  int64 orderID = 1;
+}
+
+// Ответ на запрос на оплату заказа
+message OrderPayedResponse {
+}
+
+// Запрос на отмену заказа
+message CancelOrderRequest {
+  // ID заказа
+  int64 orderID = 1;
+}
+
+// Ответ на запрос на отмену заказа
+message CancelOrderResponse {
+}
+
+// Запрос на получение остатков товара на складах
+message StocksRequest {
+  // Код товара
+  uint32 sku = 1;
+}
+
+// Остаток товара на складе
+message StocksItem {
+  // ID склаад
+  int64 warehouseID = 1;
+  // Количество
+  uint64 count = 2;
+}
+
+// Ответ на запрос на получение остатков товара на складах
+message StocksResponse {
+  // Остатки товара на складах
+  repeated StocksItem stocks = 1;
+}

@@ -2,24 +2,34 @@ package lomsclient
 
 import (
 	"context"
+	"log"
 	"route256/checkout/internal/service"
-	"route256/libs/clientwrapper"
+	lomsServiceAPI "route256/loms/pkg/loms_v1"
 
 	"github.com/pkg/errors"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Client struct {
-	url         string
-	createOrder func(ctx context.Context, req CreateOrderRequest) (*CreateOrderResponse, error)
-	stocks      func(ctx context.Context, req StocksRequest) (*StocksResponse, error)
+	lomsClient lomsServiceAPI.LOMSServiceClient
+	conn       *grpc.ClientConn
 }
 
 func New(url string) *Client {
-	return &Client{
-		url:         url,
-		createOrder: clientwrapper.New[CreateOrderRequest, CreateOrderResponse](url + "/createOrder"),
-		stocks:      clientwrapper.New[StocksRequest, StocksResponse](url + "/stocks"),
+	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("failed to connect to loms server: %v", err)
 	}
+
+	return &Client{
+		lomsClient: lomsServiceAPI.NewLOMSServiceClient(conn),
+		conn:       conn,
+	}
+}
+
+func (c *Client) Close() error {
+	return c.conn.Close()
 }
 
 type OrderItem struct {
@@ -37,16 +47,18 @@ type CreateOrderResponse struct {
 }
 
 func (c *Client) CreateOrder(ctx context.Context, order service.Order) (int64, error) {
-	request := CreateOrderRequest{
+	request := lomsServiceAPI.CreateOrderRequest{
 		User: order.User,
 	}
-	request.Items = make([]OrderItem, len(order.Items))
+	request.Items = make([]*lomsServiceAPI.OrderItem, len(order.Items))
 	for i, item := range order.Items {
-		request.Items[i].SKU = item.SKU
-		request.Items[i].Count = item.Count
+		request.Items[i] = &lomsServiceAPI.OrderItem{
+			Sku:   item.SKU,
+			Count: uint32(item.Count),
+		}
 	}
 
-	response, err := c.createOrder(ctx, request)
+	response, err := c.lomsClient.CreateOrder(ctx, &request)
 	if err != nil {
 		return -1, errors.Wrap(err, "making loms.createOrder request")
 	}
@@ -68,9 +80,9 @@ type StocksResponse struct {
 }
 
 func (c *Client) Stocks(ctx context.Context, sku uint32) ([]service.Stock, error) {
-	request := StocksRequest{SKU: sku}
+	request := lomsServiceAPI.StocksRequest{Sku: sku}
 
-	response, err := c.stocks(ctx, request)
+	response, err := c.lomsClient.Stocks(ctx, &request)
 	if err != nil {
 		return nil, errors.Wrap(err, "making loms.stocks request")
 	}
