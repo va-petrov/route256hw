@@ -7,8 +7,8 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       PGDATA: "/var/lib/postgresql/data/pgdata"
-#    ports:
-#      - "5432:5432"
+    ports:
+      - "5432:5432"
     volumes:
       - ./data/checkout:/var/lib/postgresql/data
     healthcheck:
@@ -24,15 +24,15 @@ services:
         limits:
           cpus: '1'
           memory: 2G
-  pgbcheckout:
-    image: edoburu/pgbouncer
-    environment:
-      DATABASE_URL: postgres://user:password@pgcheckout:5432/checkout
-      AUTH_TYPE: plain
-    ports:
-      - "5432:5432"
-    depends_on:
-      - pgcheckout
+#  pgbcheckout:
+#    image: edoburu/pgbouncer
+#    environment:
+#      DATABASE_URL: postgres://user:password@pgcheckout:5432/checkout
+#      AUTH_TYPE: plain
+#    ports:
+#      - "5432:5432"
+#    depends_on:
+#      - pgcheckout
 #  pgbcheckout:
 #    image: vapet/odyssey:test
 #    ports:
@@ -45,11 +45,11 @@ services:
     image: checkout
     build: ./checkout/
     environment:
-      DATABASE_URL: postgres://user:password@pgbcheckout:5432/checkout
+      DATABASE_URL: postgres://user:password@pgcheckout:5432/checkout
     ports:
       - "8080:8080"
     depends_on:
-      - pgbcheckout
+      - pgcheckout
   pgloms:
     image: postgres:15.1
     environment:
@@ -57,8 +57,8 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       PGDATA: "/var/lib/postgresql/data/pgdata"
-#    ports:
-#      - "5433:5432"
+    ports:
+      - "5433:5432"
     volumes:
       - ./data/loms:/var/lib/postgresql/data
     healthcheck:
@@ -83,23 +83,23 @@ services:
 #      - "5433:5432"
 #    depends_on:
 #      - pgloms
-  pgbloms:
-    image: vapet/odyssey:test
-    ports:
-      - "5433:6432"
-    volumes:
-      - ./loms/odyssey.conf:/odyssey.conf
-    depends_on:
-      - pgloms
+#  pgbloms:
+#    image: vapet/odyssey:test
+#    ports:
+#      - "5433:6432"
+#    volumes:
+#      - ./loms/odyssey.conf:/odyssey.conf
+#    depends_on:
+#      - pgloms
   loms:
     image: loms
     build: ./loms/
     environment:
-      DATABASE_URL: postgres://user:password@pgbloms:5432/loms?sslmode=disable
+      DATABASE_URL: postgres://user:password@pgloms:5432/loms?sslmode=disable
     ports:
       - "8081:8081"
     depends_on:
-      - pgbloms
+      - pgloms
   # notification:
   #   image: notification
   #   build: ./notification

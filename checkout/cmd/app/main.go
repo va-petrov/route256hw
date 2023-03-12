@@ -1,17 +1,21 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net"
+	"os"
 	"route256/checkout/internal/api/checkout_v1"
 	"route256/checkout/internal/clients/lomsclient"
 	"route256/checkout/internal/clients/productsclient"
 	"route256/checkout/internal/config"
+	"route256/checkout/internal/repository/postgres"
 	"route256/checkout/internal/service"
 	desc "route256/checkout/pkg/checkout_v1"
 	"route256/libs/interceptors"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -29,7 +33,19 @@ func main() {
 	productsClient := productsclient.New(config.ConfigData.Services.ProductService.Url,
 		config.ConfigData.Services.ProductService.Token)
 	defer productsClient.Close()
-	checkoutService := service.New(lomsClient, productsClient)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	pool, err := pgxpool.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatalf("failed to connect db: %v", err)
+	}
+	defer pool.Close()
+	if err := pool.Ping(ctx); err != nil {
+		log.Fatalf("failed to ping db: %v", err)
+	}
+
+	cartRepo := postgres.NewCartRepo(pool)
+	checkoutService := service.New(lomsClient, productsClient, cartRepo)
 
 	checkout_v1.NewCheckoutV1(checkoutService)
 

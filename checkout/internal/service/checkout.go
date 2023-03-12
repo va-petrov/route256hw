@@ -32,30 +32,24 @@ type ProductClient interface {
 	GetProduct(ctx context.Context, sku uint32) (Product, error)
 }
 
+type CartRepository interface {
+	GetCartItem(ctx context.Context, user int64, sku uint32) (*Item, error)
+	AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error
+	DeleteFromCart(ctx context.Context, user int64, sku uint32, count uint16) error
+	GetCart(ctx context.Context, user int64) ([]Item, error)
+	CleanCart(ctx context.Context, user int64) error
+}
+
 type Service struct {
 	LOMSService    LOMSClient
 	ProductService ProductClient
+	CartRepo       CartRepository
 }
 
-func New(lomsClient LOMSClient, productClient ProductClient) *Service {
+func New(lomsClient LOMSClient, productClient ProductClient, cartRepo CartRepository) *Service {
 	return &Service{
 		LOMSService:    lomsClient,
 		ProductService: productClient,
+		CartRepo:       cartRepo,
 	}
-}
-
-var DummyCart = Order{
-	Items: []Item{
-		{
-			SKU:   1076963,
-			Count: 10},
-		{
-			SKU:   1148162,
-			Count: 5,
-		},
-		{
-			SKU:   1625903,
-			Count: 1,
-		},
-	},
 }
