@@ -4,12 +4,21 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-2]: refactor proto and protoc generated files into service dirs">
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-3]: basic migrations, docker-compose with postgresql, pgbouncer and odyssey">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/migrations/20230311171748_create_table_carts.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/odyssey.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/migrations/20230311172954_create_tables.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loms/odyssey.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/api/v1/checkout_v1_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/api/v1/checkout_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/pkg/checkout_v1/checkout_v1_service_grpc.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/api/v1/loms_v1_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/loms/api/v1/loms_v1_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/loms/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/pkg/loms_v1/loms_v1_service_grpc.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/product-service/pkg/product/product_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/pkg/product/product_service.pb.go" afterDir="false" />
@@ -29,6 +38,11 @@
   </component>
   <component name="GOROOT" url="file:///usr/local/go" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -53,26 +67,32 @@
     "WebServerToolWindowFactoryState": "false",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vasya/go/homework/loms/api",
+    "last_opened_file_path": "/home/vasya/go/homework/checkout",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/checkout" />
       <recent name="$PROJECT_DIR$/product-service" />
       <recent name="$PROJECT_DIR$/checkout/internal/api/checkout_v1" />
       <recent name="$PROJECT_DIR$/loms/internal/api/loms_v1" />
       <recent name="$PROJECT_DIR$/pkg" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/loms" />
       <recent name="$PROJECT_DIR$/loms/api" />
       <recent name="$PROJECT_DIR$/checkout/api" />
       <recent name="$PROJECT_DIR$/checkout/pkg" />
       <recent name="$PROJECT_DIR$/loms/pkg" />
-      <recent name="$PROJECT_DIR$/product-service/api" />
     </key>
   </component>
   <component name="RunManager">
@@ -94,12 +114,24 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[GOHW-2]: grpc project init" />
     <MESSAGE value="[GOHW-2]: product service client going gRPC way" />
     <MESSAGE value="[GOHW-2]: all services working by gRPC" />
     <MESSAGE value="[GOHW-2]: refactor proto and protoc generated files into service dirs" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-2]: refactor proto and protoc generated files into service dirs" />
+    <MESSAGE value="[GOHW-3]: basic migrations, docker-compose with postgresql, pgbouncer and odyssey" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-3]: basic migrations, docker-compose with postgresql, pgbouncer and odyssey" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
