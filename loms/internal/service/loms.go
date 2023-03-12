@@ -1,5 +1,11 @@
 package service
 
+import (
+	"context"
+
+	"github.com/pkg/errors"
+)
+
 type Item struct {
 	SKU   uint32
 	Count uint16
@@ -12,6 +18,7 @@ type Order struct {
 }
 
 type Stock struct {
+	SKU         uint32
 	WarehouseID int64
 	Count       uint64
 }
@@ -20,40 +27,28 @@ type Stocks struct {
 	Stocks []Stock
 }
 
+var (
+	ErrIncorrectOrderState = errors.New("Incorrect order state for operation")
+	ErrInsufficientStocks  = errors.New("insufficient stocks")
+)
+
+type LOMSRepository interface {
+	GetStocks(ctx context.Context, sku uint32, checkReservations bool) ([]Stock, error)
+	ShipStock(ctx context.Context, sku uint32, warehouseID int64, count uint16) error
+	MakeReserve(ctx context.Context, orderID int64, sku uint32, warehouseID int64, count uint64) error
+	GetReserves(ctx context.Context, orderID int64) ([]Stock, error)
+	CancelReservationsForOrder(ctx context.Context, orderID int64) error
+	CreateOrder(ctx context.Context, order Order) (int64, error)
+	GetOrder(ctx context.Context, orderID int64) (*Order, error)
+	SetStatusOrder(ctx context.Context, orderID int64, status string) error
+}
+
 type Service struct {
+	LOMSRepo LOMSRepository
 }
 
-func New() *Service {
-	return &Service{}
-}
-
-var DummyOrder = Order{
-	Status: "new",
-	User:   1,
-	Items: []Item{
-		{
-			SKU:   1076963,
-			Count: 10},
-		{
-			SKU:   1148162,
-			Count: 5,
-		},
-		{
-			SKU:   1625903,
-			Count: 1,
-		},
-	},
-}
-
-var DummyStocks = Stocks{
-	Stocks: []Stock{
-		{
-			WarehouseID: 1,
-			Count:       5,
-		},
-		{
-			WarehouseID: 2,
-			Count:       7,
-		},
-	},
+func New(lomsRepo LOMSRepository) *Service {
+	return &Service{
+		LOMSRepo: lomsRepo,
+	}
 }

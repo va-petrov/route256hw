@@ -35,7 +35,7 @@ func main() {
 	defer productsClient.Close()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	pool, err := pgxpool.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	pool, err := pgxpool.Connect(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatalf("failed to connect db: %v", err)
 	}

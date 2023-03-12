@@ -12,8 +12,13 @@ type CartItem struct {
 }
 
 func (m *Service) Stocks(ctx context.Context, sku uint32) ([]Stock, error) {
-	result := make([]Stock, len(DummyStocks.Stocks))
-	for i, stock := range DummyStocks.Stocks {
+	stocks, err := m.LOMSRepo.GetStocks(ctx, sku, true)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]Stock, len(stocks))
+	for i, stock := range stocks {
 		result[i] = Stock{
 			WarehouseID: stock.WarehouseID,
 			Count:       stock.Count,
