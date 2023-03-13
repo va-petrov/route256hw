@@ -9,6 +9,7 @@ import (
 	"route256/loms/internal/api/loms_v1"
 	"route256/loms/internal/config"
 	"route256/loms/internal/repository/postgres"
+	"route256/loms/internal/repository/postgres/tranman"
 	"route256/loms/internal/service"
 	desc "route256/loms/pkg/loms_v1"
 
@@ -37,9 +38,10 @@ func main() {
 		log.Fatalf("failed to ping db: %v", err)
 	}
 
-	lomsRepo := postgres.NewLOMSRepo(pool)
+	txman := tranman.NewTransactionManager(pool)
+	lomsRepo := postgres.NewLOMSRepo(txman)
 
-	lomsService := service.New(lomsRepo)
+	lomsService := service.New(lomsRepo, txman)
 
 	loms_v1.NewLOMSV1(lomsService)
 

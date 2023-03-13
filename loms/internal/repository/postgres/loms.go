@@ -2,20 +2,20 @@ package postgres
 
 import (
 	"context"
+	"route256/loms/internal/repository/postgres/tranman"
 	"route256/loms/internal/service"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/pgxscan"
-	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type LOMSRepo struct {
-	Pool *pgxpool.Pool
+	tranman.QueryEngineProvider
 }
 
-func NewLOMSRepo(pool *pgxpool.Pool) *LOMSRepo {
+func NewLOMSRepo(provider tranman.QueryEngineProvider) *LOMSRepo {
 	return &LOMSRepo{
-		Pool: pool,
+		QueryEngineProvider: provider,
 	}
 }
 
@@ -38,11 +38,12 @@ type OrderItem struct {
 }
 
 func (L LOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations bool) ([]service.Stock, error) {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	var items []Stock
 	if checkReservations {
 		rawQuery := "SELECT s.warehouseid, s.sku, sum(s.count) - COALESCE(sum(r.count), 0) as count FROM stocks as s LEFT JOIN reservations as r ON r.warehouseid = s.warehouseid AND r.sku = s.sku AND r.active_until > now() WHERE s.sku = $1 GROUP BY s.warehouseid, s.sku"
-		if err := pgxscan.Select(ctx, L.Pool, &items, rawQuery, sku); err != nil {
+		if err := pgxscan.Select(ctx, db, &items, rawQuery, sku); err != nil {
 			return nil, err
 		}
 
@@ -52,7 +53,7 @@ func (L LOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations b
 		if err != nil {
 			return nil, err
 		}
-		if err := pgxscan.Select(ctx, L.Pool, &items, rawQuery, args...); err != nil {
+		if err := pgxscan.Select(ctx, db, &items, rawQuery, args...); err != nil {
 			return nil, err
 		}
 	}
@@ -72,6 +73,7 @@ func (L LOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations b
 }
 
 func (L LOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, count uint16) error {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query := psql.Select("count").From("stocks").Where(sq.Eq{"sku": sku, "warehouseid": warehouseID})
 	rawQuery, args, err := query.ToSql()
@@ -79,7 +81,7 @@ func (L LOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, 
 		return err
 	}
 	var stock int64
-	if err := L.Pool.QueryRow(ctx, rawQuery, args...).Scan(&stock); err != nil {
+	if err := db.QueryRow(ctx, rawQuery, args...).Scan(&stock); err != nil {
 		return err
 	}
 	stock -= int64(count)
@@ -92,7 +94,7 @@ func (L LOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, 
 		if err != nil {
 			return err
 		}
-		if _, err := L.Pool.Exec(ctx, rawQuery, args...); err != nil {
+		if _, err := db.Exec(ctx, rawQuery, args...); err != nil {
 			return err
 		}
 	} else {
@@ -101,7 +103,7 @@ func (L LOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, 
 		if err != nil {
 			return err
 		}
-		if _, err := L.Pool.Exec(ctx, rawQuery, args...); err != nil {
+		if _, err := db.Exec(ctx, rawQuery, args...); err != nil {
 			return err
 		}
 	}
@@ -109,19 +111,21 @@ func (L LOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, 
 }
 
 func (L LOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, warehouseID int64, count uint64) error {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query := psql.Insert("reservations").Columns("sku", "warehouseid", "orderid", "count").Values(sku, warehouseID, orderID, count)
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return err
 	}
-	if _, err := L.Pool.Exec(ctx, rawQuery, args...); err != nil {
+	if _, err := db.Exec(ctx, rawQuery, args...); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (L LOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Stock, error) {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query := psql.Select("sku", "warehouseid", "count").From("reservations").Where(sq.Eq{"orderid": orderID})
 	rawQuery, args, err := query.ToSql()
@@ -129,7 +133,7 @@ func (L LOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Sto
 		return nil, err
 	}
 	var stocks []Stock
-	if err := pgxscan.Select(ctx, L.Pool, &stocks, rawQuery, args...); err != nil {
+	if err := pgxscan.Select(ctx, db, &stocks, rawQuery, args...); err != nil {
 		return nil, err
 	}
 	result := make([]service.Stock, len(stocks))
@@ -144,6 +148,7 @@ func (L LOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Sto
 }
 
 func (L LOMSRepo) CancelReservationsForOrder(ctx context.Context, orderID int64) error {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query := psql.Delete("reservations").Where(sq.Eq{"orderid": orderID})
 	rawQuery, args, err := query.ToSql()
@@ -151,13 +156,14 @@ func (L LOMSRepo) CancelReservationsForOrder(ctx context.Context, orderID int64)
 		return err
 	}
 
-	if _, err := L.Pool.Exec(ctx, rawQuery, args...); err != nil {
+	if _, err := db.Exec(ctx, rawQuery, args...); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (L LOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, error) {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query := psql.Insert("orders").Columns("userid").Values(order.User).Suffix("RETURNING orderid")
 	rawQuery, args, err := query.ToSql()
@@ -165,7 +171,7 @@ func (L LOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, 
 		return -1, err
 	}
 	var orderID int64
-	if err := L.Pool.QueryRow(ctx, rawQuery, args...).Scan(&orderID); err != nil {
+	if err := db.QueryRow(ctx, rawQuery, args...).Scan(&orderID); err != nil {
 		return -1, err
 	}
 	query = psql.Insert("orders_items").Columns("orderid", "sku", "count")
@@ -176,13 +182,14 @@ func (L LOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, 
 	if err != nil {
 		return -1, err
 	}
-	if _, err := L.Pool.Exec(ctx, rawQuery, args...); err != nil {
+	if _, err := db.Exec(ctx, rawQuery, args...); err != nil {
 		return -1, err
 	}
 	return orderID, nil
 }
 
 func (L LOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, error) {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query := psql.Select("orderid", "userid", "status").From("orders").Where(sq.Eq{"orderid": orderID})
 	rawQuery, args, err := query.ToSql()
@@ -190,7 +197,7 @@ func (L LOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, 
 		return nil, err
 	}
 	var order Order
-	if err := L.Pool.QueryRow(ctx, rawQuery, args...).Scan(&order.OrderID, &order.UserID, &order.status); err != nil {
+	if err := db.QueryRow(ctx, rawQuery, args...).Scan(&order.OrderID, &order.UserID, &order.status); err != nil {
 		return nil, err
 	}
 	query = psql.Select("sku", "count").From("orders_items").Where(sq.Eq{"orderid": orderID})
@@ -199,7 +206,7 @@ func (L LOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, 
 		return nil, err
 	}
 	var items []OrderItem
-	err = pgxscan.Select(ctx, L.Pool, &items, rawQuery, args...)
+	err = pgxscan.Select(ctx, db, &items, rawQuery, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -230,6 +237,7 @@ func (L LOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, 
 }
 
 func (L LOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status string) error {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	var orderStatus int16
 	switch status {
@@ -249,7 +257,7 @@ func (L LOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status stri
 	if err != nil {
 		return err
 	}
-	if _, err := L.Pool.Exec(ctx, rawQuery, args...); err != nil {
+	if _, err := db.Exec(ctx, rawQuery, args...); err != nil {
 		return err
 	}
 	return nil

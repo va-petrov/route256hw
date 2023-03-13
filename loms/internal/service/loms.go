@@ -32,6 +32,13 @@ var (
 	ErrInsufficientStocks  = errors.New("insufficient stocks")
 )
 
+type TransactionManager interface {
+	RunSerializable(ctx context.Context, fx func(ctxTX context.Context) error) error
+	RunRepeatableRead(ctx context.Context, fx func(ctxTX context.Context) error) error
+	RunReadCommitted(ctx context.Context, fx func(ctxTX context.Context) error) error
+	RunReadUncommitted(ctx context.Context, fx func(ctxTX context.Context) error) error
+}
+
 type LOMSRepository interface {
 	GetStocks(ctx context.Context, sku uint32, checkReservations bool) ([]Stock, error)
 	ShipStock(ctx context.Context, sku uint32, warehouseID int64, count uint16) error
@@ -45,10 +52,12 @@ type LOMSRepository interface {
 
 type Service struct {
 	LOMSRepo LOMSRepository
+	TXMan    TransactionManager
 }
 
-func New(lomsRepo LOMSRepository) *Service {
+func New(lomsRepo LOMSRepository, txman TransactionManager) *Service {
 	return &Service{
 		LOMSRepo: lomsRepo,
+		TXMan:    txman,
 	}
 }
