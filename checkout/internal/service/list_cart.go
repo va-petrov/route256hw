@@ -19,14 +19,18 @@ type Cart struct {
 }
 
 func (m *Service) ListCart(ctx context.Context, user int64) (Cart, error) {
+	items, err := m.CartRepo.GetCart(ctx, user)
+	if err != nil {
+		return Cart{}, errors.WithMessage(err, "carts db")
+	}
 	result := Cart{
-		Items: make([]CartItem, len(DummyCart.Items)),
+		Items: make([]CartItem, len(items)),
 	}
 
-	for i, item := range DummyCart.Items {
+	for i, item := range items {
 		productInfo, err := m.ProductService.GetProduct(ctx, item.SKU)
 		if err != nil {
-			return Cart{}, errors.WithMessage(err, "checking stocks")
+			return Cart{}, errors.WithMessage(err, "getting product info")
 		}
 		result.Items[i] = CartItem{
 			SKU:   item.SKU,

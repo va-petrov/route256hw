@@ -32,3 +32,7 @@ generate-all:
 	cd checkout && make generate
 	cd loms && make generate
 	cd product-service && make generate
+
+migrations-status-all:
+	cd checkout && make migrations-status
+	cd loms && make migrations-status
