@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"route256/libs/jobs"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -10,6 +13,14 @@ type Item struct {
 	SKU   uint32
 	Count uint16
 }
+
+const (
+	OrderStatusFailed          = "failed"
+	OrderStatusCancelled       = "cancelled"
+	OrderStatusNew             = "new"
+	OrderStatusAwaitingPayment = "awaiting payment"
+	OrderStatusPayed           = "payed"
+)
 
 type Order struct {
 	Status string
@@ -48,16 +59,40 @@ type LOMSRepository interface {
 	CreateOrder(ctx context.Context, order Order) (int64, error)
 	GetOrder(ctx context.Context, orderID int64) (*Order, error)
 	SetStatusOrder(ctx context.Context, orderID int64, status string) error
+	CancelUnpayedOrders(ctx context.Context) error
+	DeleteStaleReservations(ctx context.Context) error
 }
 
 type Service struct {
-	LOMSRepo LOMSRepository
-	TXMan    TransactionManager
+	LOMSRepo             LOMSRepository
+	TXMan                TransactionManager
+	UnpayedOrdersJob     *jobs.Job
+	StaleReservationsJob *jobs.Job
 }
 
 func New(lomsRepo LOMSRepository, txman TransactionManager) *Service {
-	return &Service{
+	result := &Service{
 		LOMSRepo: lomsRepo,
 		TXMan:    txman,
 	}
+	result.UnpayedOrdersJob = jobs.NewJob("Unpayed orders", func(ctx context.Context) error {
+		return result.UnpayedOrders(ctx)
+	}, 30*time.Second)
+	result.StaleReservationsJob = jobs.NewJob("Delete stale reservations", func(ctx context.Context) error {
+		return result.StaleReservations(ctx)
+	}, 60*time.Second)
+	return result
+}
+
+func (m *Service) StartJobs(ctx context.Context) error {
+	var result error
+	err := m.UnpayedOrdersJob.Run(ctx)
+	if err != nil {
+		result = fmt.Errorf("error starting job %v", m.UnpayedOrdersJob.Name)
+	}
+	err = m.StaleReservationsJob.Run(ctx)
+	if err != nil {
+		result = errors.WithMessage(result, fmt.Sprintf("error starting job %v", m.StaleReservationsJob.Name))
+	}
+	return result
 }

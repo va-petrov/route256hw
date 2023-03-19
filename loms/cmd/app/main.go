@@ -42,6 +42,10 @@ func main() {
 	lomsRepo := postgres.NewLOMSRepo(txman)
 
 	lomsService := service.New(lomsRepo, txman)
+	err = lomsService.StartJobs(ctx)
+	if err != nil {
+		log.Fatalf("error starting jobs: %v", err)
+	}
 
 	loms_v1.NewLOMSV1(lomsService)
 

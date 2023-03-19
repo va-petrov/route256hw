@@ -11,7 +11,7 @@ func (m *Service) CancelOrder(ctx context.Context, orderID int64) error {
 			return err
 		}
 
-		if order.Status == "payed" {
+		if order.Status != OrderStatusAwaitingPayment {
 			return ErrIncorrectOrderState
 		}
 		if err := m.LOMSRepo.CancelReservationsForOrder(ctx, orderID); err != nil {
