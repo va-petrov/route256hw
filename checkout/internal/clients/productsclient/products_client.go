@@ -53,7 +53,7 @@ func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, e
 	case <-ctx.Done():
 		return service.Product{}, errors.New("getProduct request cancelled")
 	case t := <-c.rateLimiter.C:
-		log.Printf("getProduct at time: %v", t)
+		log.Printf("getProduct at time: %v", t.Format("2006-01-02 15:04:05.000000"))
 	}
 	request := productServiceAPI.GetProductRequest{
 		Token: c.token,

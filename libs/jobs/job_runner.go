@@ -35,12 +35,12 @@ func (job *Job) Run(ctx context.Context) error {
 				job.ticker.Stop()
 				return
 			case t := <-job.ticker.C:
-				log.Printf("Running job %v at %v", job.Name, t)
+				log.Printf("Running job %v at %v", job.Name, t.Format("2006-01-02 15:04:05"))
 				err := job.JobFunc(ctx)
 				if err != nil {
-					log.Printf("JobFunc %v funished at %v with error %v", job.Name, time.Now(), err)
+					log.Printf("JobFunc %v funished at %v with error %v", job.Name, time.Now().Format("2006-01-02 15:04:05"), err)
 				} else {
-					log.Printf("JobFunc %v funished successfuly at %v", job.Name, time.Now())
+					log.Printf("JobFunc %v funished successfuly at %v", job.Name, time.Now().Format("2006-01-02 15:04:05"))
 				}
 			}
 		}
