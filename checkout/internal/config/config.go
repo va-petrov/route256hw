@@ -7,15 +7,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type ProductService struct {
+	Url           string `yaml:"url"`
+	Token         string `yaml:"token"`
+	RateLimit     uint32 `yaml:"rateLimit"`
+	MaxConcurrent uint32 `yaml:"maxConcurrent"`
+}
+
 type ConfigStruct struct {
 	Token    string `yaml:"token"`
 	Services struct {
-		Loms           string `yaml:"loms"`
-		ProductService struct {
-			Url       string `yaml:"url"`
-			Token     string `yaml:"token"`
-			RateLimit uint32 `yaml:"rateLimit"`
-		} `yaml:"productService"`
+		Loms           string         `yaml:"loms"`
+		ProductService ProductService `yaml:"productService"`
 	} `yaml:"services"`
 }
 

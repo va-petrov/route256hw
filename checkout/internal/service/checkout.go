@@ -30,6 +30,7 @@ type LOMSClient interface {
 
 type ProductClient interface {
 	GetProduct(ctx context.Context, sku uint32) (Product, error)
+	GetProductsInfo(ctx context.Context, items []CartItem) error
 }
 
 type CartRepository interface {

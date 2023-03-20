@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt">
-      <change afterPath="$PROJECT_DIR$/libs/limiter/limiter.go" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-4]: simple rate limiter for products client">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/config.example.yml" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/config.example.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/internal/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/service/checkout.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/checkout.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +136,8 @@
     <MESSAGE value="[GOHW-3]: checkout service working with postgresql db" />
     <MESSAGE value="[GOHW-3]: loms service working with postgresql db (without transactions)" />
     <MESSAGE value="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt" />
+    <MESSAGE value="[GOHW-4]: simple rate limiter for products client" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-4]: simple rate limiter for products client" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

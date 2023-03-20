@@ -32,8 +32,7 @@ func main() {
 	defer lomsClient.Close()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	productsClient := productsclient.New(ctx, config.ConfigData.Services.ProductService.Url,
-		config.ConfigData.Services.ProductService.Token, config.ConfigData.Services.ProductService.RateLimit)
+	productsClient := productsclient.New(ctx, config.ConfigData.Services.ProductService)
 	defer productsClient.Close()
 	pool, err := pgxpool.Connect(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
