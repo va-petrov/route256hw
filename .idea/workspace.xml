@@ -4,18 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-2]: refactor proto and protoc generated files into service dirs">
-      <change afterPath="$PROJECT_DIR$/libs/jobs/job_runner.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/service/stale_reservations.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loms/internal/service/unpayed_orders.go" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt">
+      <change afterPath="$PROJECT_DIR$/libs/limiter/limiter.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/cmd/app/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/service/cancel_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/service/cancel_order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/service/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/service/loms.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/service/order_payed.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/service/order_payed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/config.example.yml" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/config.example.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/config/config.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,29 +44,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vasya/go/homework/loms/internal/service",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vasya/go/homework/loms/internal/service&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/checkout" />
@@ -140,7 +135,8 @@
     <MESSAGE value="[GOHW-3]: basic migrations, docker-compose with postgresql, pgbouncer and odyssey 2" />
     <MESSAGE value="[GOHW-3]: checkout service working with postgresql db" />
     <MESSAGE value="[GOHW-3]: loms service working with postgresql db (without transactions)" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-3]: loms service working with postgresql db (without transactions)" />
+    <MESSAGE value="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

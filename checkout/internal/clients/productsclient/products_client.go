@@ -4,7 +4,9 @@ import (
 	"context"
 	"log"
 	"route256/checkout/internal/service"
+	"route256/libs/limiter"
 	productServiceAPI "route256/product-service/pkg/product"
+	"time"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -15,9 +17,10 @@ type Client struct {
 	productClient productServiceAPI.ProductServiceClient
 	conn          *grpc.ClientConn
 	token         string
+	rateLimiter   *limiter.Limiter
 }
 
-func New(url string, token string) *Client {
+func New(ctx context.Context, url string, token string, rate uint32) *Client {
 	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("failed to connect to product-service server: %v", err)
@@ -27,6 +30,7 @@ func New(url string, token string) *Client {
 		productClient: productServiceAPI.NewProductServiceClient(conn),
 		conn:          conn,
 		token:         token,
+		rateLimiter:   limiter.New(ctx, time.Duration(int64(time.Second)/int64(rate))),
 	}
 }
 
@@ -41,6 +45,12 @@ type ProductInfoResponse struct {
 }
 
 func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, error) {
+	select {
+	case <-ctx.Done():
+		return service.Product{}, errors.New("getProduct request cancelled")
+	case t := <-c.rateLimiter.C:
+		log.Printf("getProduct at time: %v", t)
+	}
 	request := productServiceAPI.GetProductRequest{
 		Token: c.token,
 		Sku:   sku,
@@ -58,5 +68,6 @@ func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, e
 }
 
 func (c *Client) Close() error {
+	c.rateLimiter.Stop()
 	return c.conn.Close()
 }

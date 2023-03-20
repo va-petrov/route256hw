@@ -12,8 +12,9 @@ type ConfigStruct struct {
 	Services struct {
 		Loms           string `yaml:"loms"`
 		ProductService struct {
-			Url   string `yaml:"url"`
-			Token string `yaml:"token"`
+			Url       string `yaml:"url"`
+			Token     string `yaml:"token"`
+			RateLimit uint32 `yaml:"rateLimit"`
 		} `yaml:"productService"`
 	} `yaml:"services"`
 }
