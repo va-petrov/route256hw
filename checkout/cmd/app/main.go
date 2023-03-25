@@ -30,11 +30,10 @@ func main() {
 
 	lomsClient := lomsclient.New(config.ConfigData.Services.Loms)
 	defer lomsClient.Close()
-	productsClient := productsclient.New(config.ConfigData.Services.ProductService.Url,
-		config.ConfigData.Services.ProductService.Token)
-	defer productsClient.Close()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	productsClient := productsclient.New(ctx, config.ConfigData.Services.ProductService)
+	defer productsClient.Close()
 	pool, err := pgxpool.Connect(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatalf("failed to connect db: %v", err)

@@ -17,17 +17,31 @@ type Cart struct {
 
 type CartRepo struct {
 	Pool *pgxpool.Pool
+	psql sq.StatementBuilderType
 }
 
 func NewCartRepo(pool *pgxpool.Pool) *CartRepo {
 	return &CartRepo{
 		Pool: pool,
+		psql: sq.StatementBuilder.PlaceholderFormat(sq.Dollar),
 	}
 }
 
+const (
+	tableCarts          = "carts"
+	fieldCartItemUserID = "userid"
+	fieldCartItemmSKU   = "sku"
+	fieldCartItemCount  = "count"
+)
+
+var cartItemFields = []string{
+	fieldCartItemUserID,
+	fieldCartItemmSKU,
+	fieldCartItemCount,
+}
+
 func (c CartRepo) GetCartItem(ctx context.Context, user int64, sku uint32) (*service.Item, error) {
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	query := psql.Select("userid", "sku", "count").From("carts").Where(sq.Eq{"userid": user, "sku": sku})
+	query := c.psql.Select(cartItemFields...).From(tableCarts).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemmSKU: sku})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
@@ -48,37 +62,19 @@ func (c CartRepo) GetCartItem(ctx context.Context, user int64, sku uint32) (*ser
 }
 
 func (c CartRepo) AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error {
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	item, err := c.GetCartItem(ctx, user, sku)
+	query := c.psql.Insert(tableCarts).Columns(cartItemFields...).Values(user, sku, count)
+	query = query.Suffix("ON CONFLICT ("+fieldCartItemUserID+","+fieldCartItemmSKU+") DO UPDATE SET "+fieldCartItemCount+" = "+tableCarts+"."+fieldCartItemCount+" + ?", count)
+	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return err
 	}
-
-	if item == nil {
-		query := psql.Insert("carts").Columns("userid", "sku", "count").Values(user, sku, count)
-		rawQuery, args, err := query.ToSql()
-		if err != nil {
-			return err
-		}
-		if _, err := c.Pool.Exec(ctx, rawQuery, args...); err != nil {
-			return err
-		}
-		return nil
-	} else {
-		query := psql.Update("carts").Set("count", item.Count+count).Where(sq.Eq{"userid": user, "sku": sku})
-		rawQuery, args, err := query.ToSql()
-		if err != nil {
-			return err
-		}
-		if _, err := c.Pool.Exec(ctx, rawQuery, args...); err != nil {
-			return err
-		}
-		return nil
+	if _, err := c.Pool.Exec(ctx, rawQuery, args...); err != nil {
+		return err
 	}
+	return nil
 }
 
 func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, count uint16) error {
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	item, err := c.GetCartItem(ctx, user, sku)
 	if err != nil {
 		return err
@@ -87,7 +83,7 @@ func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, co
 	if item == nil {
 		return nil
 	} else if item.Count <= count {
-		query := psql.Delete("carts").Where(sq.Eq{"userid": user, "sku": sku})
+		query := c.psql.Delete(tableCarts).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemmSKU: sku})
 		rawQuery, args, err := query.ToSql()
 		if err != nil {
 			return err
@@ -97,7 +93,7 @@ func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, co
 		}
 		return nil
 	} else {
-		query := psql.Update("carts").Set("count", item.Count-count).Where(sq.Eq{"userid": user, "sku": sku})
+		query := c.psql.Update(tableCarts).Set(fieldCartItemCount, item.Count-count).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemmSKU: sku})
 		rawQuery, args, err := query.ToSql()
 		if err != nil {
 			return err
@@ -110,8 +106,7 @@ func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, co
 }
 
 func (c CartRepo) GetCart(ctx context.Context, user int64) ([]service.Item, error) {
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	query := psql.Select("userid", "sku", "count").From("carts").Where(sq.Eq{"userid": user})
+	query := c.psql.Select(cartItemFields...).From(tableCarts).Where(sq.Eq{fieldCartItemUserID: user})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
@@ -136,8 +131,7 @@ func (c CartRepo) GetCart(ctx context.Context, user int64) ([]service.Item, erro
 }
 
 func (c CartRepo) CleanCart(ctx context.Context, user int64) error {
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	query := psql.Delete("carts").Where(sq.Eq{"userid": user})
+	query := c.psql.Delete(tableCarts).Where(sq.Eq{fieldCartItemUserID: user})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return err

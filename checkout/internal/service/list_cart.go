@@ -28,17 +28,17 @@ func (m *Service) ListCart(ctx context.Context, user int64) (Cart, error) {
 	}
 
 	for i, item := range items {
-		productInfo, err := m.ProductService.GetProduct(ctx, item.SKU)
-		if err != nil {
-			return Cart{}, errors.WithMessage(err, "getting product info")
-		}
 		result.Items[i] = CartItem{
 			SKU:   item.SKU,
 			Count: item.Count,
-			Name:  productInfo.Name,
-			Price: productInfo.Price,
 		}
-		result.TotalPrice += uint32(item.Count) * productInfo.Price
+	}
+	err = m.ProductService.GetProductsInfo(ctx, result.Items)
+	if err != nil {
+		return Cart{}, err
+	}
+	for _, item := range result.Items {
+		result.TotalPrice += uint32(item.Count) * item.Price
 	}
 
 	return result, nil

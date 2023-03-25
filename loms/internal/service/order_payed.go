@@ -11,7 +11,7 @@ func (m *Service) OrderPayed(ctx context.Context, orderID int64) error {
 			return err
 		}
 
-		if order.Status != "awaiting payment" {
+		if order.Status != OrderStatusAwaitingPayment {
 			return ErrIncorrectOrderState
 		}
 

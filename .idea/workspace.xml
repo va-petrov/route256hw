@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-3]: loms service working with postgresql db (without transactions)">
-      <change afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/tranman/tranman.go" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-4]: parallel productInfo requests">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/cmd/app/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/service/cancel_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/service/cancel_order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/service/create_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/service/create_order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/service/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/service/loms.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/service/order_payed.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/service/order_payed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/jobs/job_runner.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/jobs/job_runner.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +52,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vasya/go/homework/checkout&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vasya/go/homework/loms/internal/service&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
@@ -78,11 +73,11 @@
       <recent name="$PROJECT_DIR$/pkg" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/loms/internal/service" />
+      <recent name="$PROJECT_DIR$/libs" />
       <recent name="$PROJECT_DIR$/loms" />
       <recent name="$PROJECT_DIR$/loms/api" />
       <recent name="$PROJECT_DIR$/checkout/api" />
-      <recent name="$PROJECT_DIR$/checkout/pkg" />
-      <recent name="$PROJECT_DIR$/loms/pkg" />
     </key>
   </component>
   <component name="RunManager">
@@ -97,6 +92,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.go build route256/loms/internal/handlers" />
+        <item itemvalue="Go Build.go build route256/loms/internal/handlers" />
       </list>
     </recent_temporary>
   </component>
@@ -109,7 +105,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="devtask/GOHW-4" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -124,7 +132,10 @@
     <MESSAGE value="[GOHW-3]: basic migrations, docker-compose with postgresql, pgbouncer and odyssey 2" />
     <MESSAGE value="[GOHW-3]: checkout service working with postgresql db" />
     <MESSAGE value="[GOHW-3]: loms service working with postgresql db (without transactions)" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-3]: loms service working with postgresql db (without transactions)" />
+    <MESSAGE value="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt" />
+    <MESSAGE value="[GOHW-4]: simple rate limiter for products client" />
+    <MESSAGE value="[GOHW-4]: parallel productInfo requests" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-4]: parallel productInfo requests" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
