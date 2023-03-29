@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"log"
+	"route256/checkout/internal/service/model"
 
 	"github.com/pkg/errors"
 )
@@ -19,7 +19,7 @@ func (m *Service) Purchase(ctx context.Context, user int64) (int64, error) {
 	if items == nil {
 		return -1, ErrEmptyCart
 	}
-	order := Order{
+	order := model.Order{
 		User:  user,
 		Items: items,
 	}
@@ -29,11 +29,9 @@ func (m *Service) Purchase(ctx context.Context, user int64) (int64, error) {
 		return -1, errors.WithMessage(err, "creating order")
 	}
 
-	go func() {
-		if err := m.CartRepo.CleanCart(context.Background(), user); err != nil {
-			log.Printf("Error cleaning cart after creating order for user %v: %v", user, err)
-		}
-	}()
+	if err := m.CartRepo.CleanCart(context.Background(), user); err != nil {
+		return -1, errors.WithMessage(err, "cleaning cart")
+	}
 
 	return orderNo, nil
 }

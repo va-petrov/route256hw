@@ -19,12 +19,20 @@ type QueryEngineProvider interface {
 	GetQueryEngine(ctx context.Context) QueryEngine
 }
 
-type TransactionManager struct {
+type TransactionManager interface {
+	QueryEngineProvider
+	RunSerializable(ctx context.Context, fx func(ctxTX context.Context) error) error
+	RunRepeatableRead(ctx context.Context, fx func(ctxTX context.Context) error) error
+	RunReadCommitted(ctx context.Context, fx func(ctxTX context.Context) error) error
+	RunReadUncommitted(ctx context.Context, fx func(ctxTX context.Context) error) error
+}
+
+type transactionManager struct {
 	pool *pgxpool.Pool
 }
 
-func NewTransactionManager(pool *pgxpool.Pool) *TransactionManager {
-	return &TransactionManager{
+func NewTransactionManager(pool *pgxpool.Pool) TransactionManager {
+	return &transactionManager{
 		pool: pool,
 	}
 }
@@ -33,7 +41,7 @@ type txkey string
 
 const key = txkey("tx")
 
-func (tm *TransactionManager) RunTransaction(ctx context.Context, isoLevel pgx.TxIsoLevel, fx func(ctxTX context.Context) error) error {
+func (tm *transactionManager) RunTransaction(ctx context.Context, isoLevel pgx.TxIsoLevel, fx func(ctxTX context.Context) error) error {
 	tx, err := tm.pool.BeginTx(ctx,
 		pgx.TxOptions{
 			IsoLevel: isoLevel,
@@ -55,23 +63,23 @@ func (tm *TransactionManager) RunTransaction(ctx context.Context, isoLevel pgx.T
 	return nil
 }
 
-func (tm *TransactionManager) RunSerializable(ctx context.Context, fx func(ctxTX context.Context) error) error {
+func (tm *transactionManager) RunSerializable(ctx context.Context, fx func(ctxTX context.Context) error) error {
 	return tm.RunTransaction(ctx, pgx.Serializable, fx)
 }
 
-func (tm *TransactionManager) RunRepeatableRead(ctx context.Context, fx func(ctxTX context.Context) error) error {
+func (tm *transactionManager) RunRepeatableRead(ctx context.Context, fx func(ctxTX context.Context) error) error {
 	return tm.RunTransaction(ctx, pgx.RepeatableRead, fx)
 }
 
-func (tm *TransactionManager) RunReadCommitted(ctx context.Context, fx func(ctxTX context.Context) error) error {
+func (tm *transactionManager) RunReadCommitted(ctx context.Context, fx func(ctxTX context.Context) error) error {
 	return tm.RunTransaction(ctx, pgx.ReadCommitted, fx)
 }
 
-func (tm *TransactionManager) RunReadUncommitted(ctx context.Context, fx func(ctxTX context.Context) error) error {
+func (tm *transactionManager) RunReadUncommitted(ctx context.Context, fx func(ctxTX context.Context) error) error {
 	return tm.RunTransaction(ctx, pgx.ReadUncommitted, fx)
 }
 
-func (tm *TransactionManager) GetQueryEngine(ctx context.Context) QueryEngine {
+func (tm *transactionManager) GetQueryEngine(ctx context.Context) QueryEngine {
 	tx, ok := ctx.Value(key).(QueryEngine)
 	if ok && tx != nil {
 		return tx

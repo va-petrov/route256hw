@@ -9,13 +9,26 @@ import (
 	"github.com/georgysavva/scany/pgxscan"
 )
 
-type LOMSRepo struct {
+type LOMSRepo interface {
+	GetStocks(ctx context.Context, sku uint32, checkReservations bool) ([]service.Stock, error)
+	ShipStock(ctx context.Context, sku uint32, warehouseID int64, count uint16) error
+	MakeReserve(ctx context.Context, orderID int64, sku uint32, warehouseID int64, count uint64) error
+	GetReserves(ctx context.Context, orderID int64) ([]service.Stock, error)
+	CancelReservationsForOrder(ctx context.Context, orderID int64) error
+	CreateOrder(ctx context.Context, order service.Order) (int64, error)
+	GetOrder(ctx context.Context, orderID int64) (*service.Order, error)
+	SetStatusOrder(ctx context.Context, orderID int64, status string) error
+	CancelUnpayedOrders(ctx context.Context) error
+	DeleteStaleReservations(ctx context.Context) error
+}
+
+type lOMSRepo struct {
 	tranman.QueryEngineProvider
 	psql sq.StatementBuilderType
 }
 
-func NewLOMSRepo(provider tranman.QueryEngineProvider) *LOMSRepo {
-	return &LOMSRepo{
+func NewLOMSRepo(provider tranman.QueryEngineProvider) LOMSRepo {
+	return &lOMSRepo{
 		QueryEngineProvider: provider,
 		psql:                sq.StatementBuilder.PlaceholderFormat(sq.Dollar),
 	}
@@ -100,15 +113,18 @@ type OrderItem struct {
 	Count   uint16 `db:"count"`
 }
 
-func (L LOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations bool) ([]service.Stock, error) {
+const (
+	getStocksQuery = "SELECT s." + fieldStockWarehouseID + ", s." + fieldStockSKU + ", sum(s." + fieldStockCount + ") - COALESCE(sum(r." + fieldStockCount + "), 0) as count FROM " + tableStocks + " as s LEFT JOIN " + tableReservations + " as r ON r." + fieldReservationsWarehouseID + " = s." + fieldStockWarehouseID + " AND r." + fieldReservationsSKU + " = s." + fieldStockSKU + " AND r." + fieldReservationsActiveUntil + " > now() WHERE s." + fieldStockSKU + " = $1 GROUP BY s." + fieldStockWarehouseID + ", s." + fieldStockSKU
+)
+
+func (L lOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations bool) ([]service.Stock, error) {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	var items []Stock
 	if checkReservations {
-		rawQuery := "SELECT s." + fieldStockWarehouseID + ", s." + fieldStockSKU + ", sum(s." + fieldStockCount + ") - COALESCE(sum(r." + fieldStockCount + "), 0) as count FROM " + tableStocks + " as s LEFT JOIN " + tableReservations + " as r ON r." + fieldReservationsWarehouseID + " = s." + fieldStockWarehouseID + " AND r." + fieldReservationsSKU + " = s." + fieldStockSKU + " AND r." + fieldReservationsActiveUntil + " > now() WHERE s." + fieldStockSKU + " = $1 GROUP BY s." + fieldStockWarehouseID + ", s." + fieldStockSKU
+		rawQuery := getStocksQuery
 		if err := pgxscan.Select(ctx, db, &items, rawQuery, sku); err != nil {
 			return nil, err
 		}
-
 	} else {
 		query := L.psql.Select(StocksFields...).From(tableStocks).Where(sq.Eq{fieldStockSKU: sku})
 		rawQuery, args, err := query.ToSql()
@@ -134,7 +150,7 @@ func (L LOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations b
 	}
 }
 
-func (L LOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, count uint16) error {
+func (L lOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, count uint16) error {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Select(fieldStockCount).From(tableStocks).Where(sq.Eq{fieldStockSKU: sku, fieldStockWarehouseID: warehouseID})
 	rawQuery, args, err := query.ToSql()
@@ -171,7 +187,7 @@ func (L LOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, 
 	return nil
 }
 
-func (L LOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, warehouseID int64, count uint64) error {
+func (L lOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, warehouseID int64, count uint64) error {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Insert(tableReservations).Columns(ReservationsFields...).Values(sku, warehouseID, orderID, count)
 	rawQuery, args, err := query.ToSql()
@@ -184,7 +200,7 @@ func (L LOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, wa
 	return nil
 }
 
-func (L LOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Stock, error) {
+func (L lOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Stock, error) {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Select(ReservationsFields...).From(tableReservations).Where(sq.Eq{fieldReservationsOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
@@ -206,7 +222,7 @@ func (L LOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Sto
 	return result, nil
 }
 
-func (L LOMSRepo) CancelReservationsForOrder(ctx context.Context, orderID int64) error {
+func (L lOMSRepo) CancelReservationsForOrder(ctx context.Context, orderID int64) error {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Delete(tableReservations).Where(sq.Eq{fieldReservationsOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
@@ -220,9 +236,13 @@ func (L LOMSRepo) CancelReservationsForOrder(ctx context.Context, orderID int64)
 	return nil
 }
 
-func (L LOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, error) {
+const (
+	createOrderQuerySuffix = "RETURNING " + fieldOrderOrderID
+)
+
+func (L lOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, error) {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
-	query := L.psql.Insert(tableOrders).Columns(fieldOrderUserID).Values(order.User).Suffix("RETURNING " + fieldOrderOrderID)
+	query := L.psql.Insert(tableOrders).Columns(fieldOrderUserID).Values(order.User).Suffix(createOrderQuerySuffix)
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return -1, err
@@ -245,7 +265,7 @@ func (L LOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, 
 	return orderID, nil
 }
 
-func (L LOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, error) {
+func (L lOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, error) {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Select(OrdersFields...).From(tableOrders).Where(sq.Eq{fieldOrderOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
@@ -291,7 +311,7 @@ func (L LOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, 
 	return &result, nil
 }
 
-func (L LOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status string) error {
+func (L lOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status string) error {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	var orderStatus int16
 	switch status {
@@ -317,18 +337,26 @@ func (L LOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status stri
 	return nil
 }
 
-func (L LOMSRepo) CancelUnpayedOrders(ctx context.Context) error {
+const (
+	cancelUnpayedOrdersQuery = "UPDATE " + tableOrders + " SET " + fieldOrderStatus + " = -1 WHERE " + fieldOrderStatus + " = 0 and " + fieldOrderCreatedAt + " + interval '10 minutes' <= now()"
+)
+
+func (L lOMSRepo) CancelUnpayedOrders(ctx context.Context) error {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
-	rawQuery := "UPDATE " + tableOrders + " SET " + fieldOrderStatus + " = -1 WHERE " + fieldOrderStatus + " = 0 and " + fieldOrderCreatedAt + " + interval '10 minutes' <= now()"
+	rawQuery := cancelUnpayedOrdersQuery
 	if _, err := db.Exec(ctx, rawQuery); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (L LOMSRepo) DeleteStaleReservations(ctx context.Context) error {
+const (
+	deleteStaleReservationsQuery = "DELETE FROM " + tableReservations + " WHERE " + fieldReservationsActiveUntil + " <= now()"
+)
+
+func (L lOMSRepo) DeleteStaleReservations(ctx context.Context) error {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
-	rawQuery := "DELETE FROM " + tableReservations + " WHERE " + fieldReservationsActiveUntil + " <= now()"
+	rawQuery := deleteStaleReservationsQuery
 	if _, err := db.Exec(ctx, rawQuery); err != nil {
 		return err
 	}
