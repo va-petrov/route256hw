@@ -5,27 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-5]: tests in checkout service">
-      <change afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/mocks/client_minimock.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/mocks/client_minimock.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/mocks/cart_repo_minimock.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/service/list_cart_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/service/model/checkout.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/service/purchase_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/service/checkout.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/checkout.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/service/purchase.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/purchase.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.work.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.work.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/loms/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/tranman/tranman.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/tranman/tranman.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +25,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="devtask/GOHW-5" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -59,29 +41,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vasya/go/homework/checkout/internal/service/model/checkout.go",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vasya/go/homework/checkout/internal/service/model/checkout.go&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="GoMoveDeclarationDialog.RECENT_KEY">
       <recent name="$PROJECT_DIR$/checkout/internal/service/model" />
@@ -101,7 +83,7 @@
       <recent name="$PROJECT_DIR$/checkout/api" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Test.go test service">
     <configuration name="TestListCart in route256/checkout/internal/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="homework" />
       <working_directory value="$PROJECT_DIR$/checkout/internal/service" />
@@ -181,7 +163,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="devtask/GOHW-1" />
+                        <option value="master" />
                       </list>
                     </value>
                   </entry>
