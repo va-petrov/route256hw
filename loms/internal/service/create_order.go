@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 )
 
 func (m *Service) CreateOrder(ctx context.Context, userID int64, items []Item) (int64, error) {
@@ -20,6 +21,10 @@ func (m *Service) CreateOrder(ctx context.Context, userID int64, items []Item) (
 		var err error
 		orderID, err = m.LOMSRepo.CreateOrder(ctx, order)
 		if err != nil {
+			return err
+		}
+
+		if err := m.LOMSRepo.AddOutbox(ctx, fmt.Sprint(orderID), OrderStatusNew); err != nil {
 			return err
 		}
 
@@ -42,10 +47,18 @@ func (m *Service) CreateOrder(ctx context.Context, userID int64, items []Item) (
 				}
 			}
 			if counter > 0 {
+				if err := m.LOMSRepo.AddOutbox(ctx, fmt.Sprint(orderID), OrderStatusFailed); err != nil {
+					return err
+				}
+
 				if err := m.LOMSRepo.SetStatusOrder(ctx, orderID, "failed"); err != nil {
 					return err
 				}
 			}
+		}
+
+		if err := m.LOMSRepo.AddOutbox(ctx, fmt.Sprint(orderID), OrderStatusAwaitingPayment); err != nil {
+			return err
 		}
 
 		if err := m.LOMSRepo.SetStatusOrder(ctx, orderID, "awaiting payment"); err != nil {

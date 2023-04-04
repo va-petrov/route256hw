@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 )
 
 func (m *Service) CancelOrder(ctx context.Context, orderID int64) error {
@@ -17,6 +18,11 @@ func (m *Service) CancelOrder(ctx context.Context, orderID int64) error {
 		if err := m.LOMSRepo.CancelReservationsForOrder(ctx, orderID); err != nil {
 			return err
 		}
+
+		if err := m.LOMSRepo.AddOutbox(ctx, fmt.Sprint(orderID), OrderStatusCancelled); err != nil {
+			return err
+		}
+
 		return m.LOMSRepo.SetStatusOrder(ctx, orderID, "cancelled")
 	})
 }

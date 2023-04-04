@@ -7,6 +7,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/pgxscan"
+	"github.com/pkg/errors"
 )
 
 type LOMSRepo interface {
@@ -20,6 +21,9 @@ type LOMSRepo interface {
 	SetStatusOrder(ctx context.Context, orderID int64, status string) error
 	CancelUnpayedOrders(ctx context.Context) error
 	DeleteStaleReservations(ctx context.Context) error
+	AddOutbox(ctx context.Context, key string, message string) error
+	GetOutbox(ctx context.Context) ([]service.OutboxMessage, error)
+	DeleteOutbox(ctx context.Context, msgID int64) error
 }
 
 type lOMSRepo struct {
@@ -53,11 +57,17 @@ var StocksFields = []string{
 	fieldStockCount,
 }
 
-var ReservationsFields = []string{
+var makeReservationsFields = []string{
+	fieldReservationsSKU,
+	fieldReservationsWarehouseID,
+	fieldReservationsOrderID,
+	fieldReservationsCount,
+}
+
+var getReservationsFields = []string{
 	fieldReservationsWarehouseID,
 	fieldReservationsSKU,
 	fieldReservationsCount,
-	fieldReservationsOrderID,
 }
 
 type Stock struct {
@@ -189,7 +199,7 @@ func (L lOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, 
 
 func (L lOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, warehouseID int64, count uint64) error {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
-	query := L.psql.Insert(tableReservations).Columns(ReservationsFields...).Values(sku, warehouseID, orderID, count)
+	query := L.psql.Insert(tableReservations).Columns(makeReservationsFields...).Values(sku, warehouseID, orderID, count)
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return err
@@ -202,14 +212,14 @@ func (L lOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, wa
 
 func (L lOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Stock, error) {
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
-	query := L.psql.Select(ReservationsFields...).From(tableReservations).Where(sq.Eq{fieldReservationsOrderID: orderID})
+	query := L.psql.Select(getReservationsFields...).From(tableReservations).Where(sq.Eq{fieldReservationsOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
 	}
 	var stocks []Stock
 	if err := pgxscan.Select(ctx, db, &stocks, rawQuery, args...); err != nil {
-		return nil, err
+		return nil, errors.WithMessage(err, "getting reserves")
 	}
 	result := make([]service.Stock, len(stocks))
 	for i, stock := range stocks {
@@ -338,7 +348,7 @@ func (L lOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status stri
 }
 
 const (
-	cancelUnpayedOrdersQuery = "UPDATE " + tableOrders + " SET " + fieldOrderStatus + " = -1 WHERE " + fieldOrderStatus + " = 0 and " + fieldOrderCreatedAt + " + interval '10 minutes' <= now()"
+	cancelUnpayedOrdersQuery = "UPDATE " + tableOrders + " SET " + fieldOrderStatus + " = -1 WHERE " + fieldOrderStatus + " = 1 and " + fieldOrderCreatedAt + " + interval '10 minutes' <= now()"
 )
 
 func (L lOMSRepo) CancelUnpayedOrders(ctx context.Context) error {
@@ -361,4 +371,72 @@ func (L lOMSRepo) DeleteStaleReservations(ctx context.Context) error {
 		return err
 	}
 	return nil
+}
+
+const (
+	tableOutbox        = "outbox"
+	fieldOutboxMsgID   = "msgID"
+	fieldOutboxKey     = "key"
+	fieldOutboxMessage = "message"
+)
+
+var outboxInsertFields = []string{
+	fieldOutboxKey,
+	fieldOutboxMessage,
+}
+
+var outboxSelectFields = []string{
+	fieldOutboxMsgID,
+	fieldOutboxKey,
+	fieldOutboxMessage,
+}
+
+type Message struct {
+	MsgID   int64  `db:"msgid"`
+	Key     string `db:"key"`
+	Message string `db:"message"`
+}
+
+func (L lOMSRepo) AddOutbox(ctx context.Context, key string, message string) error {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
+	query := L.psql.Insert(tableOutbox).Columns(outboxInsertFields...).Values(key, message)
+	rawQuery, args, err := query.ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(ctx, rawQuery, args...)
+	return err
+}
+
+func (L lOMSRepo) GetOutbox(ctx context.Context) ([]service.OutboxMessage, error) {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
+	query := L.psql.Select(outboxSelectFields...).From(tableOutbox).OrderBy(fieldOutboxMsgID)
+	rawQuery, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	var messages []Message
+	if err := pgxscan.Select(ctx, db, &messages, rawQuery, args...); err != nil {
+		return nil, err
+	}
+	result := make([]service.OutboxMessage, len(messages))
+	for i, message := range messages {
+		result[i] = service.OutboxMessage{
+			MsgID:   message.MsgID,
+			Key:     message.Key,
+			Message: message.Message,
+		}
+	}
+	return result, nil
+}
+
+func (L lOMSRepo) DeleteOutbox(ctx context.Context, msgID int64) error {
+	db := L.QueryEngineProvider.GetQueryEngine(ctx)
+	query := L.psql.Delete(tableOutbox).Where(sq.Eq{fieldOutboxMsgID: msgID})
+	rawQuery, args, err := query.ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(ctx, rawQuery, args...)
+	return err
 }

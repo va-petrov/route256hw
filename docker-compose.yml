@@ -98,8 +98,20 @@ services:
       DATABASE_URL: postgres://user:password@pgloms:5432/loms?sslmode=disable
     ports:
       - "8081:8081"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
     depends_on:
-      - pgloms
+      pgloms:
+        condition: service_healthy
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+      kafka3:
+        condition: service_healthy
   # notification:
   #   image: notification
   #   build: ./notification
@@ -128,11 +140,21 @@ services:
   kafka1:
     image: confluentinc/cp-kafka:latest
     healthcheck:
-      test: ps augwwx | egrep [S]upportedKafka
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka1:29091", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     ports:
       - "9091:9091"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
     environment:
       - KAFKA_LISTENERS=LISTENER_INT://kafka1:29091,LISTENER_EXT://0.0.0.0:9091
       - KAFKA_ADVERTISED_LISTENERS=LISTENER_INT://kafka1:29091,LISTENER_EXT://${HOST_IP:-localhost}:9091
@@ -144,11 +166,21 @@ services:
   kafka2:
     image: confluentinc/cp-kafka:latest
     healthcheck:
-      test: ps augwwx | egrep [S]upportedKafka
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka1:29091", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     ports:
       - "9092:9092"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
     environment:
       - KAFKA_LISTENERS=LISTENER_INT://kafka2:29092,LISTENER_EXT://0.0.0.0:9092
       - KAFKA_ADVERTISED_LISTENERS=LISTENER_INT://kafka2:29092,LISTENER_EXT://${HOST_IP:-localhost}:9092
@@ -160,11 +192,21 @@ services:
   kafka3:
     image: confluentinc/cp-kafka:latest
     healthcheck:
-      test: ps augwwx | egrep [S]upportedKafka
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka1:29091", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     ports:
       - "9093:9093"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
     environment:
       - KAFKA_LISTENERS=LISTENER_INT://kafka3:29093,LISTENER_EXT://0.0.0.0:9093
       - KAFKA_ADVERTISED_LISTENERS=LISTENER_INT://kafka3:29093,LISTENER_EXT://${HOST_IP:-localhost}:9093
