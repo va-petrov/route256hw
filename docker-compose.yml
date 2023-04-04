@@ -112,11 +112,23 @@ services:
         condition: service_healthy
       kafka3:
         condition: service_healthy
-  # notification:
-  #   image: notification
-  #   build: ./notification
-  #   ports:
-  #     - "8082:8082"
+  notifications:
+    image: notifications
+    build: ./notifications/
+    ports:
+      - "8082:8082"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    depends_on:
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+      kafka3:
+        condition: service_healthy
 
   # kafka
   zookeeper:
