@@ -80,3 +80,7 @@ migrations-up:
 
 migrations-down:
 	goose -dir ./migrations postgres "postgres://user:password@localhost:5432/checkout?sslmode=disable" down
+
+install-minimock:
+	go get github.com/gojuno/minimock/v3/cmd/minimock
+	go install github.com/gojuno/minimock/v3/cmd/minimock

@@ -4,10 +4,28 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-4]: parallel productInfo requests">
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-5]: tests in checkout service">
+      <change afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/mocks/client_minimock.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/mocks/client_minimock.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/mocks/cart_repo_minimock.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/service/list_cart_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/service/model/checkout.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/checkout/internal/service/purchase_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/jobs/job_runner.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/jobs/job_runner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/service/checkout.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/checkout.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/service/purchase.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/purchase.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.work.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.work.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/loms/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/tranman/tranman.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/tranman/tranman.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,30 +59,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vasya/go/homework/loms/internal/service&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/home/vasya/go/homework/checkout/internal/service/model/checkout.go",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="GoMoveDeclarationDialog.RECENT_KEY">
+      <recent name="$PROJECT_DIR$/checkout/internal/service/model" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/checkout" />
       <recent name="$PROJECT_DIR$/product-service" />
@@ -81,18 +102,67 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="go build route256/loms/internal/handlers" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="TestListCart in route256/checkout/internal/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="homework" />
-      <working_directory value="$PROJECT_DIR$/loms" />
+      <working_directory value="$PROJECT_DIR$/checkout/internal/service" />
+      <root_directory value="$PROJECT_DIR$/checkout" />
       <kind value="PACKAGE" />
-      <package value="route256/loms/internal/handlers" />
+      <package value="route256/checkout/internal/service" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestListCart\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestListCart/positive_test in route256/checkout/internal/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="homework" />
+      <working_directory value="$PROJECT_DIR$/checkout/internal/service" />
+      <root_directory value="$PROJECT_DIR$/checkout" />
+      <kind value="PACKAGE" />
+      <package value="route256/checkout/internal/service" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestListCart\E$/^\Qpositive_test\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="homework" />
+      <working_directory value="$PROJECT_DIR$/checkout/internal/service" />
+      <root_directory value="$PROJECT_DIR$/checkout" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$/checkout/internal/service" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration name="list_cart_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="homework" />
+      <working_directory value="$PROJECT_DIR$/checkout/internal/service" />
+      <root_directory value="$PROJECT_DIR$/checkout" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/checkout/internal/service/list_cart_test.go" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration name="purchase_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="homework" />
+      <working_directory value="$PROJECT_DIR$/checkout/internal/service" />
+      <root_directory value="$PROJECT_DIR$/checkout" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/checkout/internal/service/purchase_test.go" />
+      <framework value="gotest" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build route256/loms/internal/handlers" />
-        <item itemvalue="Go Build.go build route256/loms/internal/handlers" />
+        <item itemvalue="Go Test.go test service" />
+        <item itemvalue="Go Test.purchase_test.go" />
+        <item itemvalue="Go Test.list_cart_test.go" />
+        <item itemvalue="Go Test.TestListCart in route256/checkout/internal/service" />
+        <item itemvalue="Go Test.TestListCart/positive_test in route256/checkout/internal/service" />
       </list>
     </recent_temporary>
   </component>
@@ -111,7 +181,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="devtask/GOHW-4" />
+                        <option value="devtask/GOHW-1" />
                       </list>
                     </value>
                   </entry>
@@ -135,9 +205,15 @@
     <MESSAGE value="[GOHW-4]: cancel unpayed orders and delete staled reservations jobs, GOHW-3 debt" />
     <MESSAGE value="[GOHW-4]: simple rate limiter for products client" />
     <MESSAGE value="[GOHW-4]: parallel productInfo requests" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-4]: parallel productInfo requests" />
+    <MESSAGE value="[GOHW-5]: tests in checkout service" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-5]: tests in checkout service" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/homework$list_cart_test_go.out" NAME="list_cart_test.go Coverage Results" MODIFIED="1680053910672" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/homework$purchase_test_go.out" NAME="purchase_test.go Coverage Results" MODIFIED="1680055684380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/homework$go_test_service.out" NAME="go test service Coverage Results" MODIFIED="1680055755666" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

@@ -1,43 +1,25 @@
 package service
 
-import "context"
-
-type Item struct {
-	SKU   uint32
-	Count uint16
-}
-
-type Order struct {
-	Status string
-	User   int64
-	Items  []Item
-}
-
-type Stock struct {
-	WarehouseID int64
-	Count       uint64
-}
-
-type Product struct {
-	Name  string
-	Price uint32
-}
+import (
+	"context"
+	"route256/checkout/internal/service/model"
+)
 
 type LOMSClient interface {
-	CreateOrder(ctx context.Context, order Order) (int64, error)
-	Stocks(ctx context.Context, sku uint32) ([]Stock, error)
+	CreateOrder(ctx context.Context, order model.Order) (int64, error)
+	Stocks(ctx context.Context, sku uint32) ([]model.Stock, error)
 }
 
 type ProductClient interface {
-	GetProduct(ctx context.Context, sku uint32) (Product, error)
-	GetProductsInfo(ctx context.Context, items []CartItem) error
+	GetProduct(ctx context.Context, sku uint32) (model.Product, error)
+	GetProductsInfo(ctx context.Context, items []model.CartItem) error
 }
 
 type CartRepository interface {
-	GetCartItem(ctx context.Context, user int64, sku uint32) (*Item, error)
+	GetCartItem(ctx context.Context, user int64, sku uint32) (*model.Item, error)
 	AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error
 	DeleteFromCart(ctx context.Context, user int64, sku uint32, count uint16) error
-	GetCart(ctx context.Context, user int64) ([]Item, error)
+	GetCart(ctx context.Context, user int64) ([]model.Item, error)
 	CleanCart(ctx context.Context, user int64) error
 }
 

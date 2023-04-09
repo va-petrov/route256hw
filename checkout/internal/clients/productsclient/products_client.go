@@ -1,10 +1,13 @@
 package productsclient
 
+//go:generate sh -c "mkdir -p mocks && rm -rf mocks/client_minimock.go"
+//go:generate minimock -i Client -o ./mocks/ -s "_minimock.go"
+
 import (
 	"context"
 	"log"
 	"route256/checkout/internal/config"
-	"route256/checkout/internal/service"
+	"route256/checkout/internal/service/model"
 	"route256/libs/limiter"
 	productServiceAPI "route256/product-service/pkg/product"
 	"sync"
@@ -15,7 +18,13 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type Client struct {
+type Client interface {
+	GetProduct(ctx context.Context, sku uint32) (model.Product, error)
+	GetProductsInfo(ctx context.Context, items []model.CartItem) error
+	Close() error
+}
+
+type client struct {
 	productClient productServiceAPI.ProductServiceClient
 	conn          *grpc.ClientConn
 	token         string
@@ -23,13 +32,13 @@ type Client struct {
 	maxConcurrent int
 }
 
-func New(ctx context.Context, config config.ProductService) *Client {
+func New(ctx context.Context, config config.ProductService) Client {
 	conn, err := grpc.Dial(config.Url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("failed to connect to product-service server: %v", err)
 	}
 
-	return &Client{
+	return &client{
 		productClient: productServiceAPI.NewProductServiceClient(conn),
 		conn:          conn,
 		token:         config.Token,
@@ -48,10 +57,10 @@ type ProductInfoResponse struct {
 	Price uint32 `json:"price"`
 }
 
-func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, error) {
+func (c *client) GetProduct(ctx context.Context, sku uint32) (model.Product, error) {
 	select {
 	case <-ctx.Done():
-		return service.Product{}, errors.New("getProduct request cancelled")
+		return model.Product{}, errors.New("getProduct request cancelled")
 	case t := <-c.rateLimiter.C:
 		log.Printf("getProduct at time: %v", t.Format("2006-01-02 15:04:05.000000"))
 	}
@@ -62,10 +71,10 @@ func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, e
 
 	response, err := c.productClient.GetProduct(ctx, &request)
 	if err != nil {
-		return service.Product{}, errors.Wrap(err, "making loms.getProduct gRPC request")
+		return model.Product{}, errors.Wrap(err, "making loms.getProduct gRPC request")
 	}
 
-	return service.Product{
+	return model.Product{
 		Name:  response.Name,
 		Price: response.Price,
 	}, nil
@@ -74,9 +83,9 @@ func (c *Client) GetProduct(ctx context.Context, sku uint32) (service.Product, e
 // GetProductsInfo параллельное выполнение запросов к productsService для заполнения информации о товарах в корзине
 // Максимальное количество одновременных запросов задается через конфигурацию, параметр maxConcurrent для сервиса
 // Если параметр равен 0, то все товары запрашиваются параллельно без ограничений
-func (c *Client) GetProductsInfo(ctx context.Context, items []service.CartItem) error {
+func (c *client) GetProductsInfo(ctx context.Context, items []model.CartItem) error {
 	var errs error
-	taskSource := make(chan *service.CartItem)
+	taskSource := make(chan *model.CartItem)
 
 	concurrency := c.maxConcurrent
 	if c.maxConcurrent == 0 || len(items) <= c.maxConcurrent {
@@ -125,7 +134,7 @@ func (c *Client) GetProductsInfo(ctx context.Context, items []service.CartItem) 
 	return errs
 }
 
-func (c *Client) Close() error {
+func (c *client) Close() error {
 	c.rateLimiter.Stop()
 	return c.conn.Close()
 }

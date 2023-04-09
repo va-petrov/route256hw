@@ -1,9 +1,12 @@
 package lomsclient
 
+//go:generate sh -c "mkdir -p mocks && rm -rf mocks/client_minimock.go"
+//go:generate minimock -i Client -o ./mocks/ -s "_minimock.go"
+
 import (
 	"context"
 	"log"
-	"route256/checkout/internal/service"
+	"route256/checkout/internal/service/model"
 	lomsServiceAPI "route256/loms/pkg/loms_v1"
 
 	"github.com/pkg/errors"
@@ -11,24 +14,30 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type Client struct {
+type Client interface {
+	CreateOrder(ctx context.Context, order model.Order) (int64, error)
+	Stocks(ctx context.Context, sku uint32) ([]model.Stock, error)
+	Close() error
+}
+
+type client struct {
 	lomsClient lomsServiceAPI.LOMSServiceClient
 	conn       *grpc.ClientConn
 }
 
-func New(url string) *Client {
+func New(url string) Client {
 	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("failed to connect to loms server: %v", err)
 	}
 
-	return &Client{
+	return &client{
 		lomsClient: lomsServiceAPI.NewLOMSServiceClient(conn),
 		conn:       conn,
 	}
 }
 
-func (c *Client) Close() error {
+func (c *client) Close() error {
 	return c.conn.Close()
 }
 
@@ -46,7 +55,7 @@ type CreateOrderResponse struct {
 	OrderID int64 `json:"orderID"`
 }
 
-func (c *Client) CreateOrder(ctx context.Context, order service.Order) (int64, error) {
+func (c *client) CreateOrder(ctx context.Context, order model.Order) (int64, error) {
 	request := lomsServiceAPI.CreateOrderRequest{
 		User: order.User,
 	}
@@ -79,7 +88,7 @@ type StocksResponse struct {
 	Stocks []StocksItem `json:"stocks"`
 }
 
-func (c *Client) Stocks(ctx context.Context, sku uint32) ([]service.Stock, error) {
+func (c *client) Stocks(ctx context.Context, sku uint32) ([]model.Stock, error) {
 	request := lomsServiceAPI.StocksRequest{Sku: sku}
 
 	response, err := c.lomsClient.Stocks(ctx, &request)
@@ -87,9 +96,9 @@ func (c *Client) Stocks(ctx context.Context, sku uint32) ([]service.Stock, error
 		return nil, errors.Wrap(err, "making loms.stocks request")
 	}
 
-	stocks := make([]service.Stock, 0, len(response.Stocks))
+	stocks := make([]model.Stock, 0, len(response.Stocks))
 	for _, stock := range response.Stocks {
-		stocks = append(stocks, service.Stock{
+		stocks = append(stocks, model.Stock{
 			WarehouseID: stock.WarehouseID,
 			Count:       stock.Count,
 		})

@@ -1,13 +1,24 @@
 package postgres
 
+//go:generate sh -c "mkdir -p mocks && rm -rf mocks/cart_repo_minimock.go"
+//go:generate minimock -i CartRepo -o ./mocks/ -s "_minimock.go"
+
 import (
 	"context"
-	"route256/checkout/internal/service"
+	"route256/checkout/internal/service/model"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
+
+type CartRepo interface {
+	GetCartItem(ctx context.Context, user int64, sku uint32) (*model.Item, error)
+	AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error
+	DeleteFromCart(ctx context.Context, user int64, sku uint32, count uint16) error
+	GetCart(ctx context.Context, user int64) ([]model.Item, error)
+	CleanCart(ctx context.Context, user int64) error
+}
 
 type Cart struct {
 	UserID int64  `db:"userid"`
@@ -15,13 +26,13 @@ type Cart struct {
 	Count  uint16 `db:"count"`
 }
 
-type CartRepo struct {
+type cartRepo struct {
 	Pool *pgxpool.Pool
 	psql sq.StatementBuilderType
 }
 
-func NewCartRepo(pool *pgxpool.Pool) *CartRepo {
-	return &CartRepo{
+func NewCartRepo(pool *pgxpool.Pool) CartRepo {
+	return &cartRepo{
 		Pool: pool,
 		psql: sq.StatementBuilder.PlaceholderFormat(sq.Dollar),
 	}
@@ -30,18 +41,18 @@ func NewCartRepo(pool *pgxpool.Pool) *CartRepo {
 const (
 	tableCarts          = "carts"
 	fieldCartItemUserID = "userid"
-	fieldCartItemmSKU   = "sku"
+	fieldCartItemSKU    = "sku"
 	fieldCartItemCount  = "count"
 )
 
 var cartItemFields = []string{
 	fieldCartItemUserID,
-	fieldCartItemmSKU,
+	fieldCartItemSKU,
 	fieldCartItemCount,
 }
 
-func (c CartRepo) GetCartItem(ctx context.Context, user int64, sku uint32) (*service.Item, error) {
-	query := c.psql.Select(cartItemFields...).From(tableCarts).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemmSKU: sku})
+func (c cartRepo) GetCartItem(ctx context.Context, user int64, sku uint32) (*model.Item, error) {
+	query := c.psql.Select(cartItemFields...).From(tableCarts).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemSKU: sku})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
@@ -52,7 +63,7 @@ func (c CartRepo) GetCartItem(ctx context.Context, user int64, sku uint32) (*ser
 	}
 
 	if len(items) > 0 {
-		return &service.Item{
+		return &model.Item{
 			SKU:   items[0].SKU,
 			Count: items[0].Count,
 		}, nil
@@ -61,9 +72,13 @@ func (c CartRepo) GetCartItem(ctx context.Context, user int64, sku uint32) (*ser
 	}
 }
 
-func (c CartRepo) AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error {
+const (
+	addToCartQuerySuffix = "ON CONFLICT (" + fieldCartItemUserID + "," + fieldCartItemSKU + ") DO UPDATE SET " + fieldCartItemCount + " = " + tableCarts + "." + fieldCartItemCount + " + ?"
+)
+
+func (c cartRepo) AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error {
 	query := c.psql.Insert(tableCarts).Columns(cartItemFields...).Values(user, sku, count)
-	query = query.Suffix("ON CONFLICT ("+fieldCartItemUserID+","+fieldCartItemmSKU+") DO UPDATE SET "+fieldCartItemCount+" = "+tableCarts+"."+fieldCartItemCount+" + ?", count)
+	query = query.Suffix(addToCartQuerySuffix, count)
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
 		return err
@@ -74,7 +89,7 @@ func (c CartRepo) AddToCart(ctx context.Context, user int64, sku uint32, count u
 	return nil
 }
 
-func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, count uint16) error {
+func (c cartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, count uint16) error {
 	item, err := c.GetCartItem(ctx, user, sku)
 	if err != nil {
 		return err
@@ -83,7 +98,7 @@ func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, co
 	if item == nil {
 		return nil
 	} else if item.Count <= count {
-		query := c.psql.Delete(tableCarts).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemmSKU: sku})
+		query := c.psql.Delete(tableCarts).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemSKU: sku})
 		rawQuery, args, err := query.ToSql()
 		if err != nil {
 			return err
@@ -93,7 +108,7 @@ func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, co
 		}
 		return nil
 	} else {
-		query := c.psql.Update(tableCarts).Set(fieldCartItemCount, item.Count-count).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemmSKU: sku})
+		query := c.psql.Update(tableCarts).Set(fieldCartItemCount, item.Count-count).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemSKU: sku})
 		rawQuery, args, err := query.ToSql()
 		if err != nil {
 			return err
@@ -105,7 +120,7 @@ func (c CartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, co
 	}
 }
 
-func (c CartRepo) GetCart(ctx context.Context, user int64) ([]service.Item, error) {
+func (c cartRepo) GetCart(ctx context.Context, user int64) ([]model.Item, error) {
 	query := c.psql.Select(cartItemFields...).From(tableCarts).Where(sq.Eq{fieldCartItemUserID: user})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
@@ -117,9 +132,9 @@ func (c CartRepo) GetCart(ctx context.Context, user int64) ([]service.Item, erro
 	}
 
 	if len(items) > 0 {
-		result := make([]service.Item, len(items))
+		result := make([]model.Item, len(items))
 		for i, item := range items {
-			result[i] = service.Item{
+			result[i] = model.Item{
 				SKU:   item.SKU,
 				Count: item.Count,
 			}
@@ -130,7 +145,7 @@ func (c CartRepo) GetCart(ctx context.Context, user int64) ([]service.Item, erro
 	}
 }
 
-func (c CartRepo) CleanCart(ctx context.Context, user int64) error {
+func (c cartRepo) CleanCart(ctx context.Context, user int64) error {
 	query := c.psql.Delete(tableCarts).Where(sq.Eq{fieldCartItemUserID: user})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
