@@ -2,26 +2,21 @@ package interceptors
 
 import (
 	"context"
-	"fmt"
-	"time"
-
-	"github.com/fatih/color"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	log "route256/libs/logger"
 )
 
-const dateLayout = "2006-01-02"
-
-// LoggingInterceptor ...
 func LoggingInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	fmt.Printf("%s %s: %s --- %v\n", color.GreenString("[gRPC]"), time.Now().Format(dateLayout), info.FullMethod, req)
+	log.Debug("incoming GRPC request", zap.String("method", info.FullMethod), zap.Any("request", req))
 
 	res, err := handler(ctx, req)
 	if err != nil {
-		fmt.Printf("%s %s: %s --- %v\n", color.RedString("[gRPC]"), time.Now().Format(dateLayout), info.FullMethod, err)
+		log.Error("Error handling GRPC request", zap.String("method", info.FullMethod), zap.Error(err))
 		return nil, err
 	}
 
-	fmt.Printf("%s %s: %s --- %v\n", color.GreenString("[gRPC]"), time.Now().Format(dateLayout), info.FullMethod, res)
+	log.Debug("GRPC response", zap.String("method", info.FullMethod), zap.Any("response", res))
 
 	return res, nil
 }

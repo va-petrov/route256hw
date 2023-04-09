@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"flag"
 	"net"
 	"os"
 	"route256/checkout/internal/api/checkout_v1"
@@ -13,19 +13,27 @@ import (
 	"route256/checkout/internal/service"
 	desc "route256/checkout/pkg/checkout_v1"
 	"route256/libs/interceptors"
+	log "route256/libs/logger"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const grpcPort = ":8080"
+var (
+	grpcPort  = flag.String("addr", ":8080", "the port to listen")
+	develMode = flag.Bool("devel", false, "development mode")
+)
 
 func main() {
+	flag.Parse()
+
+	log.Init(*develMode)
 	err := config.Init()
 	if err != nil {
-		log.Fatal("config init", err)
+		log.Fatal("config init", zap.Error(err))
 	}
 
 	lomsClient := lomsclient.New(config.ConfigData.Services.Loms)
@@ -36,11 +44,11 @@ func main() {
 	defer productsClient.Close()
 	pool, err := pgxpool.Connect(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
-		log.Fatalf("failed to connect db: %v", err)
+		log.Fatal("failed to connect db", zap.Error(err))
 	}
 	defer pool.Close()
 	if err := pool.Ping(ctx); err != nil {
-		log.Fatalf("failed to ping db: %v", err)
+		log.Fatal("failed to ping db", zap.Error(err))
 	}
 
 	cartRepo := postgres.NewCartRepo(pool)
@@ -48,9 +56,9 @@ func main() {
 
 	checkout_v1.NewCheckoutV1(checkoutService)
 
-	lis, err := net.Listen("tcp", grpcPort)
+	lis, err := net.Listen("tcp", *grpcPort)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatal("failed to listen", zap.Error(err))
 	}
 
 	s := grpc.NewServer(
@@ -64,9 +72,9 @@ func main() {
 	reflection.Register(s)
 	desc.RegisterCheckoutServiceServer(s, checkout_v1.NewCheckoutV1(checkoutService))
 
-	log.Printf("server listening at %v", lis.Addr())
+	log.Info("server listening", zap.String("grpcAddr", *grpcPort))
 
 	if err = s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Fatal("failed to serve", zap.Error(err))
 	}
 }

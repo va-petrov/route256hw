@@ -50,6 +50,9 @@ services:
       - "8080:8080"
     depends_on:
       - pgbcheckout
+    volumes:
+      - ./logs/data/checkout.txt:/log.txt
+#    command: /app 2>&1 | tee /log.txt
   pgloms:
     image: postgres:15.1
     environment:

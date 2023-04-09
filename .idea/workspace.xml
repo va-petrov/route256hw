@@ -4,15 +4,26 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-6]: loms service sending notifications on order status changes">
-      <change afterPath="$PROJECT_DIR$/notifications/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notifications/config.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notifications/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notifications/internal/kafka/consumer_group.go" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-6]: notifications service logging order state change notifications from kafka">
+      <change afterPath="$PROJECT_DIR$/libs/logger/logger.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/filed.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/graylog.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/interceptors/logging.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/interceptors/logging.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/jobs/job_runner.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/jobs/job_runner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/sender/kafka/sender.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/sender/kafka/sender.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notifications/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/notifications/cmd/app/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notifications/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/notifications/go.mod" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +41,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="devtask/GOHW-5" />
+        <entry key="$PROJECT_DIR$" value="devtask/GOHW-6" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -46,32 +57,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vasya/go/homework/notifications",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vasya/go/homework/notifications&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ],
-    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
-      "PostgreSQL"
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;PostgreSQL&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="GoMoveDeclarationDialog.RECENT_KEY">
       <recent name="$PROJECT_DIR$/checkout/internal/service/model" />
@@ -171,7 +182,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="devtask/GOHW-6" />
+                        <option value="devtask/GOHW-7" />
                       </list>
                     </value>
                   </entry>
@@ -198,7 +209,8 @@
     <MESSAGE value="[GOHW-5]: tests in checkout service" />
     <MESSAGE value="[GOHW-6]: kafka config in docker-compose.yml" />
     <MESSAGE value="[GOHW-6]: loms service sending notifications on order status changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-6]: loms service sending notifications on order status changes" />
+    <MESSAGE value="[GOHW-6]: notifications service logging order state change notifications from kafka" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-6]: notifications service logging order state change notifications from kafka" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

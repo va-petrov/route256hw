@@ -5,15 +5,16 @@ package productsclient
 
 import (
 	"context"
-	"log"
 	"route256/checkout/internal/config"
 	"route256/checkout/internal/service/model"
 	"route256/libs/limiter"
+	log "route256/libs/logger"
 	productServiceAPI "route256/product-service/pkg/product"
 	"sync"
 	"time"
 
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -35,7 +36,7 @@ type client struct {
 func New(ctx context.Context, config config.ProductService) Client {
 	conn, err := grpc.Dial(config.Url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("failed to connect to product-service server: %v", err)
+		log.Fatal("failed to connect to product-service server", zap.Error(err))
 	}
 
 	return &client{
@@ -62,7 +63,7 @@ func (c *client) GetProduct(ctx context.Context, sku uint32) (model.Product, err
 	case <-ctx.Done():
 		return model.Product{}, errors.New("getProduct request cancelled")
 	case t := <-c.rateLimiter.C:
-		log.Printf("getProduct at time: %v", t.Format("2006-01-02 15:04:05.000000"))
+		log.Debug("getProduct at time", zap.String("time", t.Format("2006-01-02 15:04:05.000000")))
 	}
 	request := productServiceAPI.GetProductRequest{
 		Token: c.token,
@@ -96,17 +97,17 @@ func (c *client) GetProductsInfo(ctx context.Context, items []model.CartItem) er
 		wg.Add(1)
 		go func(ctx context.Context, taskNum int) {
 			defer wg.Done()
-			log.Printf("task %v started", taskNum)
+			log.Debug("task started", zap.Int("taskNum", taskNum))
 			for {
 				select {
 				case <-ctx.Done():
 					return
 				case item := <-taskSource:
 					if item == nil {
-						log.Printf("taskSource closed, task %v finishing", taskNum)
+						log.Debug("taskSource closed, task finishing", zap.Int("taskNum", taskNum))
 						return
 					}
-					log.Printf("task %v requesting info for sku %v", taskNum, item.SKU)
+					log.Debug("task requesting info for sku", zap.Int("taskNum", taskNum), zap.Uint32("SKU", item.SKU))
 					product, err := c.GetProduct(ctx, item.SKU)
 					if err != nil {
 						if errs == nil {

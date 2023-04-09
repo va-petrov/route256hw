@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"log"
+	"flag"
 	"net"
 	"os"
 	"route256/libs/interceptors"
+	log "route256/libs/logger"
 	"route256/loms/internal/api/loms_v1"
 	"route256/loms/internal/config"
 	"route256/loms/internal/repository/postgres"
@@ -16,11 +17,15 @@ import (
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const grpcPort = ":8081"
+var (
+	grpcPort  = flag.String("addr", ":8080", "the port to listen")
+	develMode = flag.Bool("devel", false, "development mode")
+)
 
 var brokers = []string{
 	"kafka1:29091",
@@ -29,20 +34,24 @@ var brokers = []string{
 }
 
 func main() {
+	flag.Parse()
+
+	log.Init(*develMode)
+
 	err := config.Init()
 	if err != nil {
-		log.Fatal("config init", err)
+		log.Fatal("config init", zap.Error(err))
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	pool, err := pgxpool.Connect(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
-		log.Fatalf("failed to connect db: %v", err)
+		log.Fatal("failed to connect db", zap.Error(err))
 	}
 	defer pool.Close()
 	if err := pool.Ping(ctx); err != nil {
-		log.Fatalf("failed to ping db: %v", err)
+		log.Fatal("failed to ping db", zap.Error(err))
 	}
 
 	txman := tranman.NewTransactionManager(pool)
@@ -50,19 +59,19 @@ func main() {
 
 	sender, err := kafka.NewSender(brokers, "orders")
 	if err != nil {
-		log.Fatalf("error connecting to kafka: %v", err)
+		log.Fatal("error connecting to kafka", zap.Error(err))
 	}
 	lomsService := service.New(lomsRepo, txman, sender)
 	err = lomsService.StartJobs(ctx)
 	if err != nil {
-		log.Fatalf("error starting jobs: %v", err)
+		log.Fatal("error starting jobs", zap.Error(err))
 	}
 
 	loms_v1.NewLOMSV1(lomsService)
 
-	lis, err := net.Listen("tcp", grpcPort)
+	lis, err := net.Listen("tcp", *grpcPort)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatal("failed to listen", zap.Error(err))
 	}
 
 	s := grpc.NewServer(
@@ -76,9 +85,9 @@ func main() {
 	reflection.Register(s)
 	desc.RegisterLOMSServiceServer(s, loms_v1.NewLOMSV1(lomsService))
 
-	log.Printf("server listening at %v", lis.Addr())
+	log.Info("server listening", zap.String("grpcPort", *grpcPort))
 
 	if err = s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Fatal("failed to serve", zap.Error(err))
 	}
 }

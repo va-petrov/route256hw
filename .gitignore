@@ -1,3 +1,5 @@
 bin
 vendor-proto
 .idea
+/logs/data/
+/checkout/logs/
