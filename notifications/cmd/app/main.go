@@ -27,7 +27,7 @@ var brokers = []string{
 func main() {
 	flag.Parse()
 
-	log.Init(*develMode)
+	log.Init(*develMode, zap.String("service", "notifications"))
 
 	keepRunning := true
 	log.Info("Starting notifications kafka consumer group...")

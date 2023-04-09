@@ -7,9 +7,11 @@ import (
 )
 
 var globalLogger *zap.Logger
+var staticFields []zap.Field
 
-func Init(devel bool) {
+func Init(devel bool, fields ...zap.Field) {
 	globalLogger = New(devel)
+	staticFields = fields
 }
 
 func New(devel bool) *zap.Logger {
@@ -44,21 +46,26 @@ func Middleware(logger *zap.Logger, next http.Handler) http.Handler {
 }
 
 func Debug(msg string, fields ...zap.Field) {
+	fields = append(fields, staticFields...)
 	globalLogger.Debug(msg, fields...)
 }
 
 func Info(msg string, fields ...zap.Field) {
+	fields = append(fields, staticFields...)
 	globalLogger.Info(msg, fields...)
 }
 
 func Error(msg string, fields ...zap.Field) {
+	fields = append(fields, staticFields...)
 	globalLogger.Error(msg, fields...)
 }
 
 func Warn(msg string, fields ...zap.Field) {
+	fields = append(fields, staticFields...)
 	globalLogger.Warn(msg, fields...)
 }
 
 func Fatal(msg string, fields ...zap.Field) {
+	fields = append(fields, staticFields...)
 	globalLogger.Fatal(msg, fields...)
 }

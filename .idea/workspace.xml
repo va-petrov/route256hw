@@ -4,25 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-6]: notifications service logging order state change notifications from kafka">
-      <change afterPath="$PROJECT_DIR$/libs/logger/logger.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/docker-compose.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/filed.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/graylog.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-7]: structured logging">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/interceptors/logging.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/interceptors/logging.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/jobs/job_runner.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/jobs/job_runner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/logger/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/logger/logger.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loms/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/cmd/app/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/sender/kafka/sender.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/sender/kafka/sender.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notifications/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/notifications/cmd/app/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -210,7 +197,8 @@
     <MESSAGE value="[GOHW-6]: kafka config in docker-compose.yml" />
     <MESSAGE value="[GOHW-6]: loms service sending notifications on order status changes" />
     <MESSAGE value="[GOHW-6]: notifications service logging order state change notifications from kafka" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-6]: notifications service logging order state change notifications from kafka" />
+    <MESSAGE value="[GOHW-7]: structured logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-7]: structured logging" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

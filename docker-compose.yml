@@ -52,7 +52,10 @@ services:
       - pgbcheckout
     volumes:
       - ./logs/data/checkout.txt:/log.txt
-#    command: /app 2>&1 | tee /log.txt
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app 2>&1 | tee /log.txt"
   pgloms:
     image: postgres:15.1
     environment:
@@ -106,6 +109,12 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    volumes:
+      - ./logs/data/loms.txt:/log.txt
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app 2>&1 | tee /log.txt"
     depends_on:
       pgloms:
         condition: service_healthy
@@ -125,6 +134,12 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    volumes:
+      - ./logs/data/notifications.txt:/log.txt
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app 2>&1 | tee /log.txt"
     depends_on:
       kafka1:
         condition: service_healthy

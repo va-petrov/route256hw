@@ -30,7 +30,7 @@ var (
 func main() {
 	flag.Parse()
 
-	log.Init(*develMode)
+	log.Init(*develMode, zap.String("service", "checkout"))
 	err := config.Init()
 	if err != nil {
 		log.Fatal("config init", zap.Error(err))

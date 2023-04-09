@@ -36,7 +36,7 @@ var brokers = []string{
 func main() {
 	flag.Parse()
 
-	log.Init(*develMode)
+	log.Init(*develMode, zap.String("service", "loms"))
 
 	err := config.Init()
 	if err != nil {
