@@ -38,6 +38,12 @@ type Stocks struct {
 	Stocks []Stock
 }
 
+type OutboxMessage struct {
+	MsgID   int64
+	Key     string
+	Message string
+}
+
 var (
 	ErrIncorrectOrderState = errors.New("Incorrect order state for operation")
 	ErrInsufficientStocks  = errors.New("insufficient stocks")
@@ -61,19 +67,29 @@ type LOMSRepository interface {
 	SetStatusOrder(ctx context.Context, orderID int64, status string) error
 	CancelUnpayedOrders(ctx context.Context) error
 	DeleteStaleReservations(ctx context.Context) error
+	AddOutbox(ctx context.Context, key string, message string) error
+	GetOutbox(ctx context.Context) ([]OutboxMessage, error)
+	DeleteOutbox(ctx context.Context, msgID int64) error
+}
+
+type NotificationsSender interface {
+	SendNotification(ctx context.Context, msg OutboxMessage) error
 }
 
 type Service struct {
-	LOMSRepo             LOMSRepository
-	TXMan                TransactionManager
-	UnpayedOrdersJob     *jobs.Job
-	StaleReservationsJob *jobs.Job
+	LOMSRepo                  LOMSRepository
+	TXMan                     TransactionManager
+	NotificationsSender       NotificationsSender
+	UnpayedOrdersJob          *jobs.Job
+	StaleReservationsJob      *jobs.Job
+	SendOrderNotificationsJob *jobs.Job
 }
 
-func New(lomsRepo LOMSRepository, txman TransactionManager) *Service {
+func New(lomsRepo LOMSRepository, txman TransactionManager, sender NotificationsSender) *Service {
 	result := &Service{
-		LOMSRepo: lomsRepo,
-		TXMan:    txman,
+		LOMSRepo:            lomsRepo,
+		TXMan:               txman,
+		NotificationsSender: sender,
 	}
 	result.UnpayedOrdersJob = jobs.NewJob("Unpayed orders", func(ctx context.Context) error {
 		return result.UnpayedOrders(ctx)
@@ -81,6 +97,9 @@ func New(lomsRepo LOMSRepository, txman TransactionManager) *Service {
 	result.StaleReservationsJob = jobs.NewJob("Delete stale reservations", func(ctx context.Context) error {
 		return result.StaleReservations(ctx)
 	}, 60*time.Second)
+	result.SendOrderNotificationsJob = jobs.NewJob("Send order notifications job", func(ctx context.Context) error {
+		return result.SendOrderNotifications(ctx)
+	}, 10*time.Second)
 	return result
 }
 
@@ -93,6 +112,10 @@ func (m *Service) StartJobs(ctx context.Context) error {
 	err = m.StaleReservationsJob.Run(ctx)
 	if err != nil {
 		result = errors.WithMessage(result, fmt.Sprintf("error starting job %v", m.StaleReservationsJob.Name))
+	}
+	err = m.SendOrderNotificationsJob.Run(ctx)
+	if err != nil {
+		result = errors.WithMessage(result, fmt.Sprintf("error starting job %v", m.SendOrderNotificationsJob.Name))
 	}
 	return result
 }

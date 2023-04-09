@@ -10,6 +10,7 @@ import (
 	"route256/loms/internal/config"
 	"route256/loms/internal/repository/postgres"
 	"route256/loms/internal/repository/postgres/tranman"
+	"route256/loms/internal/sender/kafka"
 	"route256/loms/internal/service"
 	desc "route256/loms/pkg/loms_v1"
 
@@ -20,6 +21,12 @@ import (
 )
 
 const grpcPort = ":8081"
+
+var brokers = []string{
+	"kafka1:29091",
+	"kafka2:29092",
+	"kafka3:29093",
+}
 
 func main() {
 	err := config.Init()
@@ -41,7 +48,11 @@ func main() {
 	txman := tranman.NewTransactionManager(pool)
 	lomsRepo := postgres.NewLOMSRepo(txman)
 
-	lomsService := service.New(lomsRepo, txman)
+	sender, err := kafka.NewSender(brokers, "orders")
+	if err != nil {
+		log.Fatalf("error connecting to kafka: %v", err)
+	}
+	lomsService := service.New(lomsRepo, txman, sender)
 	err = lomsService.StartJobs(ctx)
 	if err != nil {
 		log.Fatalf("error starting jobs: %v", err)

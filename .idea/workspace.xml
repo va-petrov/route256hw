@@ -4,28 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-5]: tests in checkout service">
-      <change afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/mocks/client_minimock.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/mocks/client_minimock.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/mocks/cart_repo_minimock.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/service/list_cart_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/service/model/checkout.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checkout/internal/service/purchase_test.go" afterDir="false" />
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-6]: loms service sending notifications on order status changes">
+      <change afterPath="$PROJECT_DIR$/notifications/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/notifications/config.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/notifications/go.sum" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/notifications/internal/kafka/consumer_group.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/service/checkout.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/checkout.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/list_cart.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkout/internal/service/purchase.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/purchase.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.work.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.work.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/loms/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/tranman/tranman.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/tranman/tranman.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notifications/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/notifications/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notifications/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/notifications/go.mod" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +30,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="devtask/GOHW-5" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -70,7 +57,7 @@
     "WebServerToolWindowFactoryState": "false",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vasya/go/homework/checkout/internal/service/model/checkout.go",
+    "last_opened_file_path": "/home/vasya/go/homework/notifications",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -79,6 +66,9 @@
   "keyToStringList": {
     "DatabaseDriversLRU": [
       "postgresql"
+    ],
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "PostgreSQL"
     ]
   }
 }]]></component>
@@ -87,11 +77,11 @@
       <recent name="$PROJECT_DIR$/checkout/internal/service/model" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/notifications" />
       <recent name="$PROJECT_DIR$/checkout" />
       <recent name="$PROJECT_DIR$/product-service" />
       <recent name="$PROJECT_DIR$/checkout/internal/api/checkout_v1" />
       <recent name="$PROJECT_DIR$/loms/internal/api/loms_v1" />
-      <recent name="$PROJECT_DIR$/pkg" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/loms/internal/service" />
@@ -101,7 +91,7 @@
       <recent name="$PROJECT_DIR$/checkout/api" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Test.go test service">
     <configuration name="TestListCart in route256/checkout/internal/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="homework" />
       <working_directory value="$PROJECT_DIR$/checkout/internal/service" />
@@ -181,7 +171,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="devtask/GOHW-1" />
+                        <option value="devtask/GOHW-6" />
                       </list>
                     </value>
                   </entry>
@@ -206,7 +196,9 @@
     <MESSAGE value="[GOHW-4]: simple rate limiter for products client" />
     <MESSAGE value="[GOHW-4]: parallel productInfo requests" />
     <MESSAGE value="[GOHW-5]: tests in checkout service" />
-    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-5]: tests in checkout service" />
+    <MESSAGE value="[GOHW-6]: kafka config in docker-compose.yml" />
+    <MESSAGE value="[GOHW-6]: loms service sending notifications on order status changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="[GOHW-6]: loms service sending notifications on order status changes" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
