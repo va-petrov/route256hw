@@ -3,10 +3,19 @@ package loms_v1
 import (
 	"context"
 	"route256/loms/pkg/loms_v1"
+
+	"github.com/opentracing/opentracing-go"
 )
 
 func (i *Implementation) ListOrder(ctx context.Context, req *loms_v1.ListOrderRequest) (*loms_v1.ListOrderResponse, error) {
-	order, err := i.lomsService.ListOrder(ctx, req.GetOrderID())
+	orderID := req.GetOrderID()
+
+	span := opentracing.SpanFromContext(ctx)
+	if span != nil {
+		span.SetTag("orderID", orderID)
+	}
+
+	order, err := i.lomsService.ListOrder(ctx, orderID)
 	if err != nil {
 		return nil, err
 	}

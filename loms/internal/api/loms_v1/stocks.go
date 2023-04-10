@@ -3,10 +3,19 @@ package loms_v1
 import (
 	"context"
 	"route256/loms/pkg/loms_v1"
+
+	"github.com/opentracing/opentracing-go"
 )
 
 func (i *Implementation) Stocks(ctx context.Context, req *loms_v1.StocksRequest) (*loms_v1.StocksResponse, error) {
-	stocks, err := i.lomsService.Stocks(ctx, req.GetSku())
+	sku := req.GetSku()
+
+	span := opentracing.SpanFromContext(ctx)
+	if span != nil {
+		span.SetTag("SKU", sku)
+	}
+
+	stocks, err := i.lomsService.Stocks(ctx, sku)
 	if err != nil {
 		return nil, err
 	}

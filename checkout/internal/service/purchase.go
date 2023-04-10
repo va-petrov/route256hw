@@ -29,7 +29,7 @@ func (m *Service) Purchase(ctx context.Context, user int64) (int64, error) {
 		return -1, errors.WithMessage(err, "creating order")
 	}
 
-	if err := m.CartRepo.CleanCart(context.Background(), user); err != nil {
+	if err := m.CartRepo.CleanCart(ctx, user); err != nil {
 		return -1, errors.WithMessage(err, "cleaning cart")
 	}
 

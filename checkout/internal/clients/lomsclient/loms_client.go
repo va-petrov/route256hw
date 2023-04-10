@@ -9,6 +9,8 @@ import (
 	log "route256/libs/logger"
 	lomsServiceAPI "route256/loms/pkg/loms_v1"
 
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -27,7 +29,11 @@ type client struct {
 }
 
 func New(url string) Client {
-	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(
+		url,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
+	)
 	if err != nil {
 		log.Fatal("failed to connect to loms server", zap.Error(err))
 	}

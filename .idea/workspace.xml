@@ -4,13 +4,34 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-7]: structured logging">
+    <list default="true" id="691e2df9-a601-4956-9b31-7ac1929f84bf" name="Changes" comment="[GOHW-7]: logs pulling by filed, service name in logs">
+      <change afterPath="$PROJECT_DIR$/libs/tracing/jaeger.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkout/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/add_to_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/add_to_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/delete_from_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/delete_from_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/list_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/list_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/purchase.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/api/checkout_v1/purchase.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/lomsclient/loms_client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/clients/productsclient/products_client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/repository/postgres/cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkout/internal/service/purchase.go" beforeDir="false" afterPath="$PROJECT_DIR$/checkout/internal/service/purchase.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.work.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.work.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/libs/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/libs/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/interceptors/logging.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/interceptors/logging.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/logger/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/libs/logger/logger.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loms/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/cmd/app/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notifications/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/notifications/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/cancel_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/cancel_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/create_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/create_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/list_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/list_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/order_payed.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/order_payed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/api/loms_v1/stocks.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/api/loms_v1/stocks.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" beforeDir="false" afterPath="$PROJECT_DIR$/loms/internal/repository/postgres/loms.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,11 +167,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.go test service" />
-        <item itemvalue="Go Test.purchase_test.go" />
-        <item itemvalue="Go Test.list_cart_test.go" />
         <item itemvalue="Go Test.TestListCart in route256/checkout/internal/service" />
         <item itemvalue="Go Test.TestListCart/positive_test in route256/checkout/internal/service" />
+        <item itemvalue="Go Test.purchase_test.go" />
+        <item itemvalue="Go Test.list_cart_test.go" />
+        <item itemvalue="Go Test.go test service" />
       </list>
     </recent_temporary>
   </component>

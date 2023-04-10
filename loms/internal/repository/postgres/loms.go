@@ -7,6 +7,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/pgxscan"
+	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 )
 
@@ -128,6 +129,11 @@ const (
 )
 
 func (L lOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations bool) ([]service.Stock, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.GetStocks")
+	defer span.Finish()
+
+	span.SetTag("SKU", sku)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	var items []Stock
 	if checkReservations {
@@ -161,6 +167,13 @@ func (L lOMSRepo) GetStocks(ctx context.Context, sku uint32, checkReservations b
 }
 
 func (L lOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, count uint16) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.ShipStock")
+	defer span.Finish()
+
+	span.SetTag("SKU", sku)
+	span.SetTag("warehouseID", warehouseID)
+	span.SetTag("count", count)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Select(fieldStockCount).From(tableStocks).Where(sq.Eq{fieldStockSKU: sku, fieldStockWarehouseID: warehouseID})
 	rawQuery, args, err := query.ToSql()
@@ -198,6 +211,14 @@ func (L lOMSRepo) ShipStock(ctx context.Context, sku uint32, warehouseID int64, 
 }
 
 func (L lOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, warehouseID int64, count uint64) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.MakeReserve")
+	defer span.Finish()
+
+	span.SetTag("orderID", orderID)
+	span.SetTag("SKU", sku)
+	span.SetTag("warehouseID", warehouseID)
+	span.SetTag("count", count)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Insert(tableReservations).Columns(makeReservationsFields...).Values(sku, warehouseID, orderID, count)
 	rawQuery, args, err := query.ToSql()
@@ -211,6 +232,11 @@ func (L lOMSRepo) MakeReserve(ctx context.Context, orderID int64, sku uint32, wa
 }
 
 func (L lOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Stock, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.GetReserve")
+	defer span.Finish()
+
+	span.SetTag("orderID", orderID)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Select(getReservationsFields...).From(tableReservations).Where(sq.Eq{fieldReservationsOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
@@ -233,6 +259,11 @@ func (L lOMSRepo) GetReserves(ctx context.Context, orderID int64) ([]service.Sto
 }
 
 func (L lOMSRepo) CancelReservationsForOrder(ctx context.Context, orderID int64) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.CancelReservationsForOrder")
+	defer span.Finish()
+
+	span.SetTag("orderID", orderID)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Delete(tableReservations).Where(sq.Eq{fieldReservationsOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
@@ -251,6 +282,12 @@ const (
 )
 
 func (L lOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.CreateOrder")
+	defer span.Finish()
+
+	span.SetTag("userID", order.User)
+	span.SetTag("items", order.Items)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Insert(tableOrders).Columns(fieldOrderUserID).Values(order.User).Suffix(createOrderQuerySuffix)
 	rawQuery, args, err := query.ToSql()
@@ -276,6 +313,11 @@ func (L lOMSRepo) CreateOrder(ctx context.Context, order service.Order) (int64, 
 }
 
 func (L lOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.GetOrder")
+	defer span.Finish()
+
+	span.SetTag("orderID", orderID)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Select(OrdersFields...).From(tableOrders).Where(sq.Eq{fieldOrderOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
@@ -322,6 +364,12 @@ func (L lOMSRepo) GetOrder(ctx context.Context, orderID int64) (*service.Order, 
 }
 
 func (L lOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status string) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.SetStatusOrder")
+	defer span.Finish()
+
+	span.SetTag("orderID", orderID)
+	span.SetTag("status", status)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	var orderStatus int16
 	switch status {
@@ -336,6 +384,7 @@ func (L lOMSRepo) SetStatusOrder(ctx context.Context, orderID int64, status stri
 	case service.OrderStatusPayed:
 		orderStatus = OrderStatusPayed
 	}
+
 	query := L.psql.Update(tableOrders).Set(fieldOrderStatus, orderStatus).Where(sq.Eq{fieldOrderOrderID: orderID})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
@@ -398,6 +447,12 @@ type Message struct {
 }
 
 func (L lOMSRepo) AddOutbox(ctx context.Context, key string, message string) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "LOMSRepo.AddOutbox")
+	defer span.Finish()
+
+	span.SetTag("key", key)
+	span.SetTag("message", message)
+
 	db := L.QueryEngineProvider.GetQueryEngine(ctx)
 	query := L.psql.Insert(tableOutbox).Columns(outboxInsertFields...).Values(key, message)
 	rawQuery, args, err := query.ToSql()

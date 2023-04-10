@@ -7,6 +7,7 @@ import (
 	"os"
 	"route256/libs/interceptors"
 	log "route256/libs/logger"
+	"route256/libs/tracing"
 	"route256/loms/internal/api/loms_v1"
 	"route256/loms/internal/config"
 	"route256/loms/internal/repository/postgres"
@@ -16,14 +17,16 @@ import (
 	desc "route256/loms/pkg/loms_v1"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 var (
-	grpcPort  = flag.String("addr", ":8080", "the port to listen")
+	grpcPort  = flag.String("addr", ":8081", "the port to listen")
 	develMode = flag.Bool("devel", false, "development mode")
 )
 
@@ -42,6 +45,8 @@ func main() {
 	if err != nil {
 		log.Fatal("config init", zap.Error(err))
 	}
+
+	tracing.Init("loms")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -77,6 +82,7 @@ func main() {
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(
 			grpcMiddleware.ChainUnaryServer(
+				otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
 				interceptors.LoggingInterceptor,
 			),
 		),
