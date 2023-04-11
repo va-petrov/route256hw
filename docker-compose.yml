@@ -50,6 +50,7 @@ services:
       JAEGER_AGENT_PORT: 6831
     ports:
       - "8080:8080"
+      - "7080:7080"
     depends_on:
       pgbcheckout:
         condition: service_started
@@ -111,6 +112,7 @@ services:
       JAEGER_AGENT_PORT: 6831
     ports:
       - "8081:8081"
+      - "7081:7081"
     deploy:
       restart_policy:
         condition: on-failure
@@ -141,6 +143,7 @@ services:
       JAEGER_AGENT_PORT: 6831
     ports:
       - "8082:8082"
+      - "7082:7082"
     deploy:
       restart_policy:
         condition: on-failure
@@ -269,3 +272,18 @@ services:
       - 16686:16686 # web
       - 14268:14268
       - 9411:9411
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics/alerts.yml:/etc/prometheus/alerts.yml
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    volumes:
+      - ./metrics/data:/var/lib/grafana
+    links:
+      - prometheus

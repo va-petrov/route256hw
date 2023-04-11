@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"net"
+	"net/http"
 	"os"
 	"route256/checkout/internal/api/checkout_v1"
 	"route256/checkout/internal/clients/lomsclient"
@@ -14,7 +15,9 @@ import (
 	desc "route256/checkout/pkg/checkout_v1"
 	"route256/libs/interceptors"
 	log "route256/libs/logger"
+	"route256/libs/metrics"
 	"route256/libs/tracing"
+	"sync"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
@@ -26,8 +29,9 @@ import (
 )
 
 var (
-	grpcPort  = flag.String("addr", ":8080", "the port to listen")
-	develMode = flag.Bool("devel", false, "development mode")
+	grpcPort    = flag.String("addr", ":8080", "port to listen")
+	metricsPort = flag.String("metrics", ":7080", "port for metrics")
+	develMode   = flag.Bool("devel", false, "development mode")
 )
 
 func main() {
@@ -54,6 +58,22 @@ func main() {
 	if err := pool.Ping(ctx); err != nil {
 		log.Fatal("failed to ping db", zap.Error(err))
 	}
+
+	metricsServerDone := &sync.WaitGroup{}
+	metricsServerDone.Add(1)
+	metricsServer := &http.Server{
+		Addr: *metricsPort,
+	}
+
+	go func(ctx context.Context) {
+		defer metricsServerDone.Done()
+		http.Handle("/metrics", metrics.New())
+
+		log.Info("listening http for metrics", zap.String("addr", *metricsPort))
+		if err := metricsServer.ListenAndServe(); err != nil {
+			log.Error(ctx, "Error starting metrics handler", zap.Error(err))
+		}
+	}(ctx)
 
 	cartRepo := postgres.NewCartRepo(pool)
 	checkoutService := service.New(lomsClient, productsClient, cartRepo)
@@ -82,4 +102,9 @@ func main() {
 	if err = s.Serve(lis); err != nil {
 		log.Fatal("failed to serve", zap.Error(err))
 	}
+
+	if err := metricsServer.Shutdown(ctx); err != nil {
+		log.Error(ctx, "Error stopping metrics handler", zap.Error(err))
+	}
+	metricsServerDone.Wait()
 }

@@ -4,9 +4,11 @@ import (
 	"context"
 	"flag"
 	"go.uber.org/zap"
+	"net/http"
 	"os"
 	"os/signal"
 	log "route256/libs/logger"
+	"route256/libs/metrics"
 	"route256/notifications/internal/kafka"
 	"sync"
 	"syscall"
@@ -15,7 +17,8 @@ import (
 )
 
 var (
-	develMode = flag.Bool("devel", false, "development mode")
+	metricsPort = flag.String("metrics", ":7082", "port for metrics")
+	develMode   = flag.Bool("devel", false, "development mode")
 )
 
 var brokers = []string{
@@ -29,6 +32,24 @@ func main() {
 
 	log.Init(*develMode, zap.String("service", "notifications"))
 
+	ctx, cancel := context.WithCancel(context.Background())
+
+	metricsServerDone := &sync.WaitGroup{}
+	metricsServerDone.Add(1)
+	metricsServer := &http.Server{
+		Addr: *metricsPort,
+	}
+
+	go func(ctx context.Context) {
+		defer metricsServerDone.Done()
+		http.Handle("/metrics", metrics.New())
+
+		log.Info("listening http for metrics", zap.String("addr", *metricsPort))
+		if err := metricsServer.ListenAndServe(); err != nil {
+			log.Error(ctx, "Error starting metrics handler", zap.Error(err))
+		}
+	}(ctx)
+
 	keepRunning := true
 	log.Info("Starting notifications kafka consumer group...")
 
@@ -41,7 +62,6 @@ func main() {
 
 	const groupName = "group-orders"
 
-	ctx, cancel := context.WithCancel(context.Background())
 	client, err := sarama.NewConsumerGroup(brokers, groupName, config)
 	if err != nil {
 		log.Fatal("Error creating consumer group client", zap.Error(err))
@@ -84,11 +104,17 @@ func main() {
 		}
 	}
 
+	if err := metricsServer.Shutdown(ctx); err != nil {
+		log.Error(ctx, "Error stopping metrics handler", zap.Error(err))
+	}
+	metricsServerDone.Wait()
+
 	cancel()
 	wg.Wait()
 	if err = client.Close(); err != nil {
 		log.Fatal("Error closing client", zap.Error(err))
 	}
+
 }
 
 func toggleConsumptionFlow(client sarama.ConsumerGroup, isPaused *bool) {

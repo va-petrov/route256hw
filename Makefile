@@ -6,6 +6,7 @@ build-all:
 	cd notifications && GOOS=linux make build
 
 run-all: build-all
+	docker compose rm kafka1 kafka2 kafka3 zookeeper
 	docker compose up --force-recreate --build
 
 precommit:
