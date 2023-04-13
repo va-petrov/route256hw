@@ -46,10 +46,22 @@ services:
     build: ./checkout/
     environment:
       DATABASE_URL: postgres://user:password@pgbcheckout:5432/checkout
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: 6831
     ports:
       - "8080:8080"
+      - "7080:7080"
     depends_on:
-      - pgbcheckout
+      pgbcheckout:
+        condition: service_started
+      jaeger:
+        condition: service_started
+    volumes:
+      - ./logs/data/checkout.txt:/log.txt
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app 2>&1 | tee /log.txt"
   pgloms:
     image: postgres:15.1
     environment:
@@ -96,13 +108,22 @@ services:
     build: ./loms/
     environment:
       DATABASE_URL: postgres://user:password@pgloms:5432/loms?sslmode=disable
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: 6831
     ports:
       - "8081:8081"
+      - "7081:7081"
     deploy:
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    volumes:
+      - ./logs/data/loms.txt:/log.txt
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app 2>&1 | tee /log.txt"
     depends_on:
       pgloms:
         condition: service_healthy
@@ -112,16 +133,28 @@ services:
         condition: service_healthy
       kafka3:
         condition: service_healthy
+      jaeger:
+        condition: service_started
   notifications:
     image: notifications
     build: ./notifications/
+    environment:
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: 6831
     ports:
       - "8082:8082"
+      - "7082:7082"
     deploy:
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    volumes:
+      - ./logs/data/notifications.txt:/log.txt
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app 2>&1 | tee /log.txt"
     depends_on:
       kafka1:
         condition: service_healthy
@@ -129,6 +162,8 @@ services:
         condition: service_healthy
       kafka3:
         condition: service_healthy
+      jaeger:
+        condition: service_started
 
   # kafka
   zookeeper:
@@ -156,7 +191,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-      start_period: 10s
+      start_period: 30s
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -164,9 +199,9 @@ services:
       - "9091:9091"
     deploy:
       restart_policy:
-        condition: on-failure
-        delay: 3s
-        max_attempts: 5
+        condition: any
+        delay: 10s
+#        max_attempts: 5
     environment:
       - KAFKA_LISTENERS=LISTENER_INT://kafka1:29091,LISTENER_EXT://0.0.0.0:9091
       - KAFKA_ADVERTISED_LISTENERS=LISTENER_INT://kafka1:29091,LISTENER_EXT://${HOST_IP:-localhost}:9091
@@ -182,7 +217,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-      start_period: 10s
+      start_period: 30s
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -190,9 +225,9 @@ services:
       - "9092:9092"
     deploy:
       restart_policy:
-        condition: on-failure
-        delay: 3s
-        max_attempts: 5
+        condition: any
+        delay: 10s
+#        max_attempts: 5
     environment:
       - KAFKA_LISTENERS=LISTENER_INT://kafka2:29092,LISTENER_EXT://0.0.0.0:9092
       - KAFKA_ADVERTISED_LISTENERS=LISTENER_INT://kafka2:29092,LISTENER_EXT://${HOST_IP:-localhost}:9092
@@ -208,7 +243,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-      start_period: 10s
+      start_period: 30s
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -216,9 +251,9 @@ services:
       - "9093:9093"
     deploy:
       restart_policy:
-        condition: on-failure
-        delay: 3s
-        max_attempts: 5
+        condition: any
+        delay: 10s
+#        max_attempts: 5
     environment:
       - KAFKA_LISTENERS=LISTENER_INT://kafka3:29093,LISTENER_EXT://0.0.0.0:9093
       - KAFKA_ADVERTISED_LISTENERS=LISTENER_INT://kafka3:29093,LISTENER_EXT://${HOST_IP:-localhost}:9093
@@ -227,3 +262,28 @@ services:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_BROKER_ID=3
       - ZOOKEEPER=zookeeper:2181
+  jaeger:
+    image: jaegertracing/all-in-one:1.18
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686 # web
+      - 14268:14268
+      - 9411:9411
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics/alerts.yml:/etc/prometheus/alerts.yml
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    volumes:
+      - ./metrics/data:/var/lib/grafana
+    links:
+      - prometheus

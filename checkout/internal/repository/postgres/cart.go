@@ -10,6 +10,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/opentracing/opentracing-go"
 )
 
 type CartRepo interface {
@@ -52,6 +53,12 @@ var cartItemFields = []string{
 }
 
 func (c cartRepo) GetCartItem(ctx context.Context, user int64, sku uint32) (*model.Item, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CartRepo.GetCartItem")
+	defer span.Finish()
+
+	span.SetTag("userID", user)
+	span.SetTag("SKU", sku)
+
 	query := c.psql.Select(cartItemFields...).From(tableCarts).Where(sq.Eq{fieldCartItemUserID: user, fieldCartItemSKU: sku})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
@@ -77,6 +84,13 @@ const (
 )
 
 func (c cartRepo) AddToCart(ctx context.Context, user int64, sku uint32, count uint16) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CartRepo.AddToCart")
+	defer span.Finish()
+
+	span.SetTag("userID", user)
+	span.SetTag("SKU", sku)
+	span.SetTag("count", count)
+
 	query := c.psql.Insert(tableCarts).Columns(cartItemFields...).Values(user, sku, count)
 	query = query.Suffix(addToCartQuerySuffix, count)
 	rawQuery, args, err := query.ToSql()
@@ -90,6 +104,13 @@ func (c cartRepo) AddToCart(ctx context.Context, user int64, sku uint32, count u
 }
 
 func (c cartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, count uint16) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CartRepo.DeleteFromCart")
+	defer span.Finish()
+
+	span.SetTag("userID", user)
+	span.SetTag("SKU", sku)
+	span.SetTag("count", count)
+
 	item, err := c.GetCartItem(ctx, user, sku)
 	if err != nil {
 		return err
@@ -121,6 +142,11 @@ func (c cartRepo) DeleteFromCart(ctx context.Context, user int64, sku uint32, co
 }
 
 func (c cartRepo) GetCart(ctx context.Context, user int64) ([]model.Item, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CartRepo.GetCart")
+	defer span.Finish()
+
+	span.SetTag("userID", user)
+
 	query := c.psql.Select(cartItemFields...).From(tableCarts).Where(sq.Eq{fieldCartItemUserID: user})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {
@@ -146,6 +172,11 @@ func (c cartRepo) GetCart(ctx context.Context, user int64) ([]model.Item, error)
 }
 
 func (c cartRepo) CleanCart(ctx context.Context, user int64) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CartRepo.CleanCart")
+	defer span.Finish()
+
+	span.SetTag("userID", user)
+
 	query := c.psql.Delete(tableCarts).Where(sq.Eq{fieldCartItemUserID: user})
 	rawQuery, args, err := query.ToSql()
 	if err != nil {

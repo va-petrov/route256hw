@@ -3,10 +3,19 @@ package checkout_v1
 import (
 	"context"
 	"route256/checkout/pkg/checkout_v1"
+
+	"github.com/opentracing/opentracing-go"
 )
 
 func (i *Implementation) ListCart(ctx context.Context, req *checkout_v1.ListCartRequest) (*checkout_v1.ListCartResponse, error) {
-	cart, err := i.checkoutService.ListCart(ctx, req.GetUser())
+	userID := req.GetUser()
+
+	span := opentracing.SpanFromContext(ctx)
+	if span != nil {
+		span.SetTag("userID", userID)
+	}
+
+	cart, err := i.checkoutService.ListCart(ctx, userID)
 	if err != nil {
 		return nil, err
 	}

@@ -2,11 +2,12 @@ package kafka
 
 import (
 	"context"
-	"log"
+	log "route256/libs/logger"
 	"route256/loms/internal/service"
 	"time"
 
 	"github.com/Shopify/sarama"
+	"go.uber.org/zap"
 )
 
 type Sender interface {
@@ -71,6 +72,6 @@ func (s sender) SendNotification(ctx context.Context, msg service.OutboxMessage)
 		return err
 	}
 
-	log.Printf("notification sent for order %v, message %v, partition %v, offset %v", msg.Key, msg.Message, partition, offset)
+	log.Debug("notification sent", zap.String("orderID", msg.Key), zap.String("message", msg.Message), zap.Int32("partition", partition), zap.Int64("offset", offset))
 	return nil
 }

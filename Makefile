@@ -6,6 +6,7 @@ build-all:
 	cd notifications && GOOS=linux make build
 
 run-all: build-all
+	docker compose rm kafka1 kafka2 kafka3 zookeeper
 	docker compose up --force-recreate --build
 
 precommit:
@@ -36,3 +37,13 @@ generate-all:
 migrations-status-all:
 	cd checkout && make migrations-status
 	cd loms && make migrations-status
+
+.PHONY: logs
+logs:
+	mkdir -p logs/data
+	touch logs/data/checkout.txt
+	touch logs/data/loms.txt
+	touch logs/data/notifications.txt
+	touch logs/data/offsets.yaml
+	sudo chmod -R 777 logs/data
+	cd logs && sudo docker compose up

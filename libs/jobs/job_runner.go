@@ -3,7 +3,8 @@ package jobs
 import (
 	"context"
 	"fmt"
-	"log"
+	"go.uber.org/zap"
+	log "route256/libs/logger"
 	"time"
 )
 
@@ -35,12 +36,12 @@ func (job *Job) Run(ctx context.Context) error {
 				job.ticker.Stop()
 				return
 			case t := <-job.ticker.C:
-				log.Printf("Running job %v at %v", job.Name, t.Format("2006-01-02 15:04:05"))
+				log.Debug("Running job", zap.String("jobName", job.Name), zap.String("time", t.Format("2006-01-02 15:04:05")))
 				err := job.JobFunc(ctx)
 				if err != nil {
-					log.Printf("JobFunc %v funished at %v with error %v", job.Name, time.Now().Format("2006-01-02 15:04:05"), err)
+					log.Debug("JobFunc funished with error", zap.String("jobName", job.Name), zap.String("time", time.Now().Format("2006-01-02 15:04:05")), zap.Error(err))
 				} else {
-					log.Printf("JobFunc %v funished successfuly at %v", job.Name, time.Now().Format("2006-01-02 15:04:05"))
+					log.Debug("JobFunc funished successfuly", zap.String("jobName", job.Name), zap.String("time", time.Now().Format("2006-01-02 15:04:05")))
 				}
 			}
 		}
