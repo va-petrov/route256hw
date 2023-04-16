@@ -7,11 +7,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type CacheConfig struct {
+	MaxSize uint64 `yaml:"maxSize"`
+	Type    string `yaml:"type"`
+	TTL     uint64 `yaml:"ttl"`
+}
+
 type ProductService struct {
-	Url           string `yaml:"url"`
-	Token         string `yaml:"token"`
-	RateLimit     uint32 `yaml:"rateLimit"`
-	MaxConcurrent uint32 `yaml:"maxConcurrent"`
+	Url           string      `yaml:"url"`
+	Token         string      `yaml:"token"`
+	RateLimit     uint32      `yaml:"rateLimit"`
+	MaxConcurrent uint32      `yaml:"maxConcurrent"`
+	UseCache      bool        `yaml:"useCache"`
+	CacheConfig   CacheConfig `yaml:"cacheConfig"`
 }
 
 type ConfigStruct struct {

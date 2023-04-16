@@ -4,3 +4,9 @@ services:
     url: route256.pavl.uk:8082
     token: testtoken
     rateLimit: 10
+    maxConcurrent: 5
+    useCache: true
+    cacheConfig:
+      maxSize: 100
+      type: lru
+      ttl: 0
